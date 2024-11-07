@@ -10,12 +10,6 @@
 	box-sizing: border-box;
 }
 
-body.login-page #content {
-  display: none; /* Hide #content when on the login page */
-}
-body:not(.login-page) #content {
-  display: block;  /* Ensure content is shown when authenticated */
-}
 
 a {
 	text-decoration: none;
@@ -56,6 +50,7 @@ body {
 	background: var(--grey);
 	overflow-x: hidden;
 }
+
 
 
 

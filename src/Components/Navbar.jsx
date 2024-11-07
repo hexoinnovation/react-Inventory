@@ -1,21 +1,25 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
-const Navbar = () => {
+const Navbar = ({ handleMenuClick }) => {
   const [searchVisible, setSearchVisible] = useState(false);
+  const menuBarRef = useRef(null); // Ref for the menu icon
 
   const toggleSearch = (e) => {
     if (window.innerWidth < 576) {
-      e.preventDefault(); // Prevent the form from submitting
+      e.preventDefault(); // Prevent form submission
       setSearchVisible(!searchVisible); // Toggle search visibility
     }
   };
 
   return (
     <nav>
+      {/* Menu Icon */}
       <div className="search-menu">
-        <i className="bx bx-menu text-black"></i>
-
-        
+        <i
+          ref={menuBarRef}
+          className="bx bx-menu text-black"
+          onClick={handleMenuClick} // Trigger the sidebar toggle
+        ></i>
 
         {/* Search form with dynamic classes */}
         <form action="#" className="search-form">
@@ -28,6 +32,7 @@ const Navbar = () => {
           </div>
         </form>
       </div>
+
       <div className="theme-profile">
         <input type="checkbox" id="switch-mode" hidden />
         <label htmlFor="switch-mode" className="switch-mode"></label>
