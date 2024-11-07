@@ -11,6 +11,7 @@ import Account from './pages/Account';
 import Dashboard from './pages/Dashboard';
 
 import { FaUser, FaLock, FaSignInAlt } from 'react-icons/fa'; // Importing icons
+import Suppliers from './pages/Suppliers';
 
 
 const App = () => {
@@ -54,6 +55,7 @@ const App = () => {
             <Route path="/" element={!isAuthenticated ? "" : <Dashboard handleLogin={handleLogin} />} />
             <Route path="/dashboard" element={isAuthenticated ? <Dashboard handleLogout={handleLogout} /> : <Navigate to="/" />} />
             <Route path="/purchase" element={isAuthenticated ? <Purchase /> : <Navigate to="/" />} />
+            <Route path="/suppliers" element={isAuthenticated ? <Suppliers/> : <Navigate to="/" />} />
             <Route path="/inventory" element={isAuthenticated ? <Inventory /> : <Navigate to="/" />} />
             <Route path="/sales" element={isAuthenticated ? <Sales /> : <Navigate to="/" />} />
             <Route path="/report" element={isAuthenticated ? <Report /> : <Navigate to="/" />} />
