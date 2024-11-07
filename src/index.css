@@ -111,6 +111,10 @@ body {
 	background: var(--grey);
 	position: relative;
 }
+#sidebar .side-menu li .text {
+	margin-left: 8px;
+	
+}
 #sidebar .side-menu li.active::before {
 	content: '';
 	position: absolute;

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { AiOutlineDownload, AiOutlineEye } from 'react-icons/ai';
+import { MdOutlineAddCircle } from "react-icons/md";
 
 const Purchase = () => {
   const [showModal, setShowModal] = useState(false);
@@ -48,7 +49,7 @@ const Purchase = () => {
       {/* Search and Button Section */}
       <div className="flex justify-between mb-4">
         {/* Search Bar */}
-        <div className="relative w-1/3 flex items-center">
+        <div className="relative w-40 flex items-center">
   <label htmlFor="table-search" className="sr-only">Search</label>
   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
     <FaSearch className="w-4 h-4 text-gray-600" />
@@ -68,11 +69,21 @@ const Purchase = () => {
     className="px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
     onClick={() => setShowModal(true)}
   >
-    + Create Purchase Order
+  <div className='flex gap-1'>
+            <span className=' text-2xl '><MdOutlineAddCircle />
+            </span>
+            <span className="text-base">Create</span>
+
+            </div>
   </button>
-  <button className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
-    <AiOutlineDownload className="w-5 h-5 inline mr-2" /> Download
+
+  <button className="px-2 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
+    <AiOutlineDownload className="w-5 h-5 inline mr-2" />
+    <span>SVC</span>
   </button>
+
+
+ 
 </div>
 
       </div>
@@ -112,89 +123,152 @@ const Purchase = () => {
 
       {/* Modal for Creating Purchase Order */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white rounded-lg p-8 w-full max-w-md">
-            <h2 className="text-2xl font-semibold mb-4">Create Purchase Order</h2>
-            <form onSubmit={handleFormSubmit}>
-              <input
-                type="text"
-                name="name"
-                placeholder="Product Name"
-                className="w-full mb-4 p-2 border rounded"
-                value={newProduct.name}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="text"
-                name="color"
-                placeholder="Color"
-                className="w-full mb-4 p-2 border rounded"
-                value={newProduct.color}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="text"
-                name="category"
-                placeholder="Category"
-                className="w-full mb-4 p-2 border rounded"
-                value={newProduct.category}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="text"
-                name="price"
-                placeholder="Price"
-                className="w-full mb-4 p-2 border rounded"
-                value={newProduct.price}
-                onChange={handleInputChange}
-                required
-              />
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  className="px-4 py-2 mr-2 bg-gray-300 rounded hover:bg-gray-400"
-                  onClick={() => setShowModal(false)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                  Submit
-                </button>
-              </div>
-            </form>
-          </div>
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+    <div className="bg-white rounded-lg p-6 w-full max-w-sm x-small:max-w-md medium:max-w-lg">
+    
+      <h2 className="text-2xl font-semibold mb-4">Create Purchase Order</h2>
+      <form onSubmit={handleFormSubmit}>
+        <input
+          type="text"
+          name="name"
+          placeholder="Product Name"
+          className="w-full mb-4 p-3 border rounded"
+          value={newProduct.name}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="text"
+          name="color"
+          placeholder="Color"
+          className="w-full mb-4 p-3 border rounded"
+          value={newProduct.color}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="text"
+          name="category"
+          placeholder="Category"
+          className="w-full mb-4 p-3 border rounded"
+          value={newProduct.category}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="text"
+          name="price"
+          placeholder="Price"
+          className="w-full mb-4 p-3 border rounded"
+          value={newProduct.price}
+          onChange={handleInputChange}
+          required
+        />
+        <div className="flex justify-between mt-4 gap-4">
+          <button
+            type="button"
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            onClick={() => setShowModal(false)}
+          >
+            Cancel
+          </button>
+          <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            Submit
+          </button>
         </div>
-      )}
+      </form>
+    </div>
+  </div>
+)}
 
-      {/* Popup for Viewing Product Details */}
-      {showPopup && selectedProduct && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white rounded-lg p-8 w-full max-w-md">
-            <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
-            <p><strong>Name:</strong> {selectedProduct.name}</p>
-            <p><strong>Color:</strong> {selectedProduct.color}</p>
-            <p><strong>Category:</strong> {selectedProduct.category}</p>
-            <p><strong>Price:</strong> {selectedProduct.price}</p>
-            <div className="flex justify-end mt-4 gap-2">
-              <button
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                onClick={() => handleRemoveProduct(selectedProduct.id)}
-              >
-                Remove
-              </button>
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                onClick={() => setShowPopup(false)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
+{/* Popup for Viewing Product Details */}
+{showModal && (
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+    <div className="bg-white rounded-lg p-6 w-full max-w-sm x-small:max-w-md medium:max-w-lg">
+      <h2 className="text-2xl font-semibold mb-4">Create Purchase Order</h2>
+      <form onSubmit={handleFormSubmit}>
+        <input
+          type="text"
+          name="name"
+          placeholder="Product Name"
+          className="w-full mb-4 p-3 border rounded"
+          value={newProduct.name}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="text"
+          name="color"
+          placeholder="Color"
+          className="w-full mb-4 p-3 border rounded"
+          value={newProduct.color}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="text"
+          name="category"
+          placeholder="Category"
+          className="w-full mb-4 p-3 border rounded"
+          value={newProduct.category}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="text"
+          name="price"
+          placeholder="Price"
+          className="w-full mb-4 p-3 border rounded"
+          value={newProduct.price}
+          onChange={handleInputChange}
+          required
+        />
+        <div className="flex justify-between mt-4 gap-4">
+          <button
+            type="button"
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            onClick={() => setShowModal(false)}
+          >
+            Cancel
+          </button>
+          <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            Submit
+          </button>
         </div>
-      )}
+      </form>
+    </div>
+  </div>
+)}
+
+{/* Popup for Viewing Product Details */}
+{showPopup && selectedProduct && (
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+    <div className="bg-white rounded-lg p-6 w-full max-w-xs x-small:max-w-xs   medium:max-w-lg">
+      <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
+      <p><strong>Name:</strong> {selectedProduct.name}</p>
+      <p><strong>Color:</strong> {selectedProduct.color}</p>
+      <p><strong>Category:</strong> {selectedProduct.category}</p>
+      <p><strong>Price:</strong> {selectedProduct.price}</p>
+      <div className="flex justify-between mt-4 gap-4">
+        <button
+          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          onClick={() => handleRemoveProduct(selectedProduct.id)}
+        >
+          Remove
+        </button>
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          onClick={() => setShowPopup(false)}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
     </div>
   );
 };
