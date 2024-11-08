@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; // Import Link from React Router
-
+import { MdOutlineBookmarkBorder } from "react-icons/md";
+import { TbTruckDelivery } from "react-icons/tb";
 const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
   const [activeLink, setActiveLink] = useState('Dashboard'); // Default active link is Dashboard
   const [isPurchaseDropdownOpen, setIsPurchaseDropdownOpen] = useState(false); // Manage Purchase dropdown state
@@ -57,15 +58,19 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
           {isPurchaseDropdownOpen && (
             <ul>
               <li>
-                <Link to="/purchase" onClick={() => handleLinkClick('Orders')}>
-                  <span className="text">Orders</span>
-                </Link>
-              </li>
+  <Link to="/purchase" onClick={() => handleLinkClick('Orders')} className="flex items-center">
+    <div className="flex items-center justify-center w-6 h-6 mr-2">
+      <MdOutlineBookmarkBorder className="w-full h-full" />
+    </div>
+    <span className="text">Purchase Orders</span>
+  </Link>
+</li>
               <li>
-                <Link to="/suppliers" onClick={() => handleLinkClick('Suppliers')}>
-                  <span className="text">Suppliers</span>
-                </Link>
-              </li>
+  <Link to="/suppliers" onClick={() => handleLinkClick('Suppliers')}>
+    <TbTruckDelivery className="w-5 h-5 mr-2" /> {/* Add margin-right for spacing */}
+    <span className="text">Suppliers</span>
+  </Link>
+</li>
             </ul>
           )}
         </li>
