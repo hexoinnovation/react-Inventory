@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import TodoList from '../Components/Todolist';
 
-const Dashboard = () => {
+const Dashboard = ({ handleLogout }) => {
   return (
     <main>
       <div className="head-title">
@@ -60,6 +60,14 @@ const Dashboard = () => {
 
         <TodoList />
       </div>
+
+      {/* Logout Button */}
+      <button 
+        className="mt-4 p-2 bg-red-500 text-white rounded"
+        onClick={handleLogout}
+      >
+        Logout
+      </button>
     </main>
   );
 };
