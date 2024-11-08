@@ -1,88 +1,93 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-import { FaUser, FaLock } from 'react-icons/fa'; // Importing relevant icons from React Icons
-import { MdLogin } from 'react-icons/md'; // You can use this for the login button if you like
-
-const Login = ({handleLogin}) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate = useNavigate();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Simulate login logic (you can replace this with real authentication)
-    if (username === 'premkpk2004@gmail.com' && password === 'admin') {
-      handleLogin(); // Successful login
-      navigate('/dashboard  ')
-    } else {
-      alert('Invalid credentials');
-    }
-  };
+// 
 
 
+import React from 'react';
+
+const Login = () => {
   return (
-    <section className="bg-gray-50 dark:bg-gray-900 flex h-screen justify-center items-center w-full">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-       
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Sign in to your account
-            </h1>
-            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-              {/* Email Input */}
+    <div className="max-h-screen">
+      
+      <section className="border-red-500 bg-gray-200 min-h-screen flex items-center justify-center">
+        <div className="bg-gray-100 p-5 flex rounded-2xl shadow-lg max-w-3xl">
+          <div className="md:w-1/2 px-5">
+            <h2 className="text-2xl font-bold text-[#002D74]">Login</h2>
+            <p className="text-sm mt-4 text-[#002D74]">If you have an account, please login</p>
+            <form className="mt-6" action="#" method="POST">
               <div>
-                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                <input 
+                <label className="block text-gray-700" htmlFor="email">Email Address</label>
+                <input
                   type="email"
-                  name="username"
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="name@company.com"
+                  id="email"
+                  placeholder="Enter Email Address"
+                  className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-blue-500 focus:bg-white focus:outline-none"
+                  autoFocus
+                  autoComplete="email"
                   required
                 />
               </div>
-              {/* Password Input */}
-              <div>
-                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                <input 
+  
+              <div className="mt-4">
+                <label className="block text-gray-700" htmlFor="password">Password</label>
+                <input
                   type="password"
-                  name="password"
                   id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="••••••••"
+                  placeholder="Enter Password"
+                  minLength="6"
+                  className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-blue-500 focus:bg-white focus:outline-none"
                   required
                 />
               </div>
-              {/* Remember me and Forgot password */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-start">
-                 
-                  <div className="ml-3 text-sm">
-                    <label htmlFor="remember" className="text-gray-500 dark:text-gray-300">Remember me</label>
-                  </div>
-                </div>
-                <a href="#" className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Forgot password?</a>
+  
+              <div className="text-right mt-2">
+                <a href="#" className="text-sm font-semibold text-gray-700 hover:text-blue-700 focus:text-blue-700">Forgot Password?</a>
               </div>
-              {/* Submit Button */}
-              <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                Sign in
+  
+              <button
+                type="submit"
+                className="w-full block bg-blue-500 hover:bg-blue-400 focus:bg-blue-400 text-white font-semibold rounded-lg px-4 py-3 mt-6"
+              >
+                Log In
               </button>
-              {/* Sign up link */}
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet? <a href="#" className="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</a>
-              </p>
             </form>
+
+            <div className="mt-7 grid grid-cols-3 items-center text-gray-500">
+              <hr className="border-gray-500" />
+              <p className="text-center text-sm">OR</p>
+              <hr className="border-gray-500" />
+            </div>
+
+            <button
+              className="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 duration-300"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 48 48">
+                <path fill="#FBBC05" d="M0 37V11l17 13z" />
+                <path fill="#EA4335" d="M0 11l17 13 7-6.1L48 14V0H0z" />
+                <path fill="#34A853" d="M0 37l30-23 7.9 1L48 0v48H0z" />
+                <path fill="#4285F4" d="M48 48L17 24l-4-3 35-10z" />
+              </svg>
+              <span className="ml-4">Login with Google</span>
+            </button>
+
+            <div className="text-sm flex justify-between items-center mt-3">
+              <p>If you don't have an account...</p>
+              <button
+                className="py-2 px-5 ml-3 bg-white border rounded-xl hover:scale-110 duration-300 border-blue-400"
+              >
+                Register
+              </button>
+            </div>
+          </div>
+
+          <div className="w-1/2 md:block hidden">
+            <img
+              src="https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1887&q=80"
+              className="rounded-2xl"
+              alt="page"
+            />
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 };
 
