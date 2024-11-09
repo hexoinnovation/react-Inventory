@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Import Link from React Router
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Import Link from React Router
 import { MdOutlineBookmarkBorder } from "react-icons/md";
 import { TbTruckDelivery } from "react-icons/tb";
 const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
-  const [activeLink, setActiveLink] = useState('Dashboard'); // Default active link is Dashboard
+  const [activeLink, setActiveLink] = useState("Dashboard"); // Default active link is Dashboard
   const [isPurchaseDropdownOpen, setIsPurchaseDropdownOpen] = useState(false); // Manage Purchase dropdown state
   const [isSalesDropdownOpen, setIsSalesDropdownOpen] = useState(false); // Manage Purchase dropdown state
 
@@ -25,7 +25,7 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
   }, [sidebarVisible]);
 
   return (
-    <section id="sidebar" className={sidebarVisible ? '' : 'hide'}>
+    <section id="sidebar" className={sidebarVisible ? "" : "hide"}>
       {/* Sidebar Logo and Toggle Button for Mobile */}
       <div className="sidebar-header">
         <a href="#" className="brand">
@@ -36,80 +36,101 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
 
       {/* Sidebar menu */}
       <ul className="side-menu top">
-        <li className={activeLink === 'Dashboard' ? 'active' : ''}>
-          <Link to="/" onClick={() => handleLinkClick('Dashboard')}>
+        <li className={activeLink === "Dashboard" ? "active" : ""}>
+          <Link to="/" onClick={() => handleLinkClick("Dashboard")}>
             <i className="bx bxs-dashboard"></i>
             <span className="text">Dashboard</span>
           </Link>
         </li>
 
         {/* Purchase dropdown button */}
-        <li className={isPurchaseDropdownOpen ? 'active' : ''}>
+        <li className={isPurchaseDropdownOpen ? "drop-active" : ""}>
           <div
-            className={`dropdown-link ${isPurchaseDropdownOpen ? 'active' : ''}`}
+            className={`dropdown-link ${
+              isPurchaseDropdownOpen ? "drop-active" : ""
+            }`}
             onClick={togglePurchaseDropdown}
           >
-            <i className="bx bxs-cart"></i>
+            <span className="icon">
+              {" "}
+              <i className="bx bxs-cart"></i>
+            </span>
             <span className="drop">Purchase</span>
-            <i className={`bx bx-chevron-${isPurchaseDropdownOpen ? 'up' : 'down'} ml-auto`}></i>
+            <i
+              className={`bx bx-chevron-${
+                isPurchaseDropdownOpen ? "up" : "down"
+              } ml-auto`}
+            ></i>
           </div>
 
           {/* Dropdown Menu */}
           {isPurchaseDropdownOpen && (
             <ul>
               <li>
-  <Link to="/purchase" onClick={() => handleLinkClick('Orders')} className="flex items-center">
-    <div className="flex items-center justify-center w-6 h-6 mr-2">
-      <MdOutlineBookmarkBorder className="w-full h-full" />
-    </div>
-    <span className="text">Purchase Orders</span>
-  </Link>
-</li>
+                <Link to="/purchase" onClick={() => handleLinkClick('Orders')}>
+                <i className="bx bxs-cart"></i>
+                  <span className="drop">Purchase Order</span>
+                </Link>
+              </li>
               <li>
-  <Link to="/suppliers" onClick={() => handleLinkClick('Suppliers')}>
-    <TbTruckDelivery className="w-5 h-5 mr-2" /> {/* Add margin-right for spacing */}
-    <span className="text">Suppliers</span>
-  </Link>
-</li>
+                <Link to="/suppliers" onClick={() => handleLinkClick('Suppliers')}>
+                <i className="bx bxs-cart"></i>
+                  <span className="drop">Suppliers</span>
+                </Link>
+              </li>
             </ul>
           )}
         </li>
 
-        <li className={activeLink === 'Inventory' ? 'active' : ''}>
-          <Link to="/inventory" onClick={() => handleLinkClick('Inventory')}>
+        <li className={activeLink === "Inventory" ? "active" : ""}>
+          <Link to="/inventory" onClick={() => handleLinkClick("Inventory")}>
             <i className="bx bxs-package"></i>
             <span className="text">Inventory</span>
           </Link>
         </li>
 
-        <li className={isSalesDropdownOpen ? 'active' : ''}>
+        <li className={isSalesDropdownOpen ? "drop-active" : ""}>
           <div
-            className={`dropdown-link ${isSalesDropdownOpen ? 'active' : ''}`}
+            className={`dropdown-link ${
+              isSalesDropdownOpen ? "drop-active" : ""
+            }`}
             onClick={toggleSalesDropdown}
           >
-            <i className="bx bxs-cart"></i>
+            <span className="icon">
+              {" "}
+              <i className="bx bxs-cart"></i>
+            </span>
             <span className="drop">Sales</span>
-            <i className={`bx bx-chevron-${isSalesDropdownOpen ? 'up' : 'down'} ml-auto`}></i>
+            <i
+              className={`bx bx-chevron-${
+                isSalesDropdownOpen ? "up" : "down"
+              } ml-auto`}
+            ></i>
           </div>
 
           {/* Dropdown Menu */}
           {isSalesDropdownOpen && (
             <ul>
               <li>
-                <Link to="/orders" onClick={() => handleLinkClick('Orders')}>
+                <Link to="/orders" onClick={() => handleLinkClick("Orders")}>
+                  <i className="bx bxs-cart"></i>
                   <span className="text">Customer</span>
                 </Link>
               </li>
               <li>
-                <Link to="/suppliers" onClick={() => handleLinkClick('Suppliers')}>
+                <Link
+                  to="/suppliers"
+                  onClick={() => handleLinkClick("Suppliers")}
+                >
+                  <i className="bx bxs-cart"></i>
                   <span className="text">Sales Return</span>
                 </Link>
               </li>
             </ul>
           )}
         </li>
-        <li className={activeLink === 'Report' ? 'active' : ''}>
-          <Link to="/report" onClick={() => handleLinkClick('Report')}>
+        <li className={activeLink === "Report" ? "active" : ""}>
+          <Link to="/report" onClick={() => handleLinkClick("Report")}>
             <i className="bx bxs-file"></i>
             <span className="text">Report</span>
           </Link>
