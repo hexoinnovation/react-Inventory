@@ -116,9 +116,10 @@ const Purchase = () => {
         <table className="w-full text-sm text-left text-white">
           <thead className="text-xs text-black uppercase bg-gray-300">
             <tr>
+              <th scope="col" className="px-6 py-3">Product Id</th>   
               <th scope="col" className="px-6 py-3">Product Name</th>
-              <th scope="col" className="px-6 py-3">Color</th>
               <th scope="col" className="px-6 py-3">Category</th>
+              {/* <th scope="col" className="px-6 py-3">Category</th> */}
               <th scope="col" className="px-6 py-3">Price</th>
               <th scope="col" className="px-6 py-3">Action</th>
             </tr>
@@ -126,8 +127,9 @@ const Purchase = () => {
           <tbody className="bg-gray-200 text-black">
             {products.map((product) => (
               <tr key={product.id} className="border-b hover:bg-gray-50">
+                <td className="px-6 py-4 font-medium">{product.id}</td>
                 <td className="px-6 py-4 font-medium">{product.name}</td>
-                <td className="px-6 py-4">{product.color}</td>
+                {/* <td className="px-6 py-4">{product.color}</td> */}
                 <td className="px-6 py-4">{product.category}</td>
                 <td className="px-6 py-4">{product.price}</td>
                 <td className="px-6 py-4">
@@ -137,6 +139,19 @@ const Purchase = () => {
                   >
                     <AiOutlineEye className="inline mr-1" /> View
                   </button>
+                  <button
+    className="text-yellow-600 hover:text-yellow-700"
+    onClick={() => { setShowPopup(true); setSelectedProduct(product); }}
+  >
+    <AiOutlineEdit className="w-5 h-5" />
+  </button>
+
+  <button
+    className="text-red-600 hover:text-red-700"
+    onClick={() => { setShowPopup(true); setSelectedProduct(product); }}
+  >
+    <AiOutlineDelete className="w-5 h-5" />
+  </button>
                 </td>
               </tr>
             ))}
@@ -216,12 +231,18 @@ const Purchase = () => {
             <p><strong>Color:</strong> {selectedProduct.color}</p>
             <p><strong>Category:</strong> {selectedProduct.category}</p>
             <p><strong>Price:</strong> {selectedProduct.price}</p>
-            <div className="flex justify-end mt-4">
-              <button
+            <div className="flex justify-end mt-4 gap-2">
+            <button
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                onClick={() => handleRemoveProduct(selectedProduct.id)}
+                onClick={() => handleRemoveContact(selectedContact.id)}
               >
-                Remove Product
+                Remove
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                onClick={() => setShowPopup(false)}
+              >
+                Close
               </button>
             </div>
           </div>
