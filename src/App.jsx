@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Sidebar from './Components/Sidebar';
 import Navbar from './Components/Navbar';
@@ -9,53 +9,80 @@ import Sales from './pages/Sales';
 import Settings from './pages/Settings';
 import Account from './pages/Account';
 import Dashboard from './pages/Dashboard';
-
-import { FaUser, FaLock, FaSignInAlt } from 'react-icons/fa'; // Importing icons
 import Suppliers from './pages/Suppliers';
-
+import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from './config/firebase';
+import { FaUser, FaLock, FaSignInAlt } from 'react-icons/fa';
+import { db } from './config/firebase'; // Import Firestore database
+import { doc, setDoc } from 'firebase/firestore'; // Firestore functions for adding data
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Authentication state
-  const [showModal, setShowModal] = useState(true); // Show/Hide modal for login
-  const [sidebarVisible, setSidebarVisible] = useState(true); // Sidebar visibility state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showModal, setShowModal] = useState(true);
+  const [sidebarVisible, setSidebarVisible] = useState(true);
   const [isSignup, setIsSignup] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  // Handle sign-up logic
+  const handleSignup = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Add admin data to the "admins" collection in Firestore
+    await setDoc(doc(db, 'admins', user.email), {
+      email: user.email,
+      createdAt: new Date(),
+    });
+
+      alert('Account created successfully! You can now log in.');
+      setIsSignup(false); // Switch to login form
+    } catch (error) {
+      if (error.code === 'auth/email-already-in-use') {
+        alert("This email is already registered. Please use a different email or log in.");
+      } else if (error.code === 'auth/weak-password') {
+        alert("Password should be at least 6 characters.");
+      } else {
+        console.error("Error during sign-up: ", error);
+        alert("An error occurred. Please try again.");
+      }
+    }
+  };
 
   // Handle login logic
-  const handleLogin = () => {
-    setIsAuthenticated(true); // Set user as authenticated
-    setShowModal(false); // Hide modal after login
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      setIsAuthenticated(true);
+      setShowModal(false); // Hide modal after login
+    } catch (error) {
+      console.error("Error during login: ", error);
+      alert("Invalid email or password. Please try again.");
+    }
   };
 
   // Handle logout logic
   const handleLogout = () => {
     setIsAuthenticated(false);
-    setShowModal(true); // Show modal after logout
+    setShowModal(true);
   };
 
-  // Handle sidebar toggle (when menu button is clicked)
+  // Handle sidebar toggle
   const handleMenuClick = () => {
-    setSidebarVisible(prevState => !prevState); // Toggle sidebar visibility
+    setSidebarVisible(prevState => !prevState);
   };
-
-  useEffect(() => {
-    // Any other setup logic can go here (e.g., checking authentication from localStorage)
-  }, []); // Empty dependency array means this effect runs only once
 
   return (
     <Router>
       <div className="App">
-        {/* Sidebar and Navbar only visible if user is authenticated */}
         {isAuthenticated && <Sidebar sidebarVisible={sidebarVisible} />}
         <div id="content" className={isAuthenticated ? "" : "blur-sm"}>
-          {/* Navbar only visible if user is authenticated */}
           {isAuthenticated && <Navbar handleMenuClick={handleMenuClick} />}
-
-          {/* Routes */}
           <Routes>
-            <Route path="/" element={!isAuthenticated ? "" : <Dashboard handleLogin={handleLogin} />} />
+            <Route path="/" element={!isAuthenticated ? "" : <Dashboard />} />
             <Route path="/dashboard" element={isAuthenticated ? <Dashboard handleLogout={handleLogout} /> : <Navigate to="/" />} />
             <Route path="/purchase" element={isAuthenticated ? <Purchase /> : <Navigate to="/" />} />
-            <Route path="/suppliers" element={isAuthenticated ? <Suppliers/> : <Navigate to="/" />} />
+            <Route path="/suppliers" element={isAuthenticated ? <Suppliers /> : <Navigate to="/" />} />
             <Route path="/inventory" element={isAuthenticated ? <Inventory /> : <Navigate to="/" />} />
             <Route path="/sales" element={isAuthenticated ? <Sales /> : <Navigate to="/" />} />
             <Route path="/report" element={isAuthenticated ? <Report /> : <Navigate to="/" />} />
@@ -65,79 +92,71 @@ const App = () => {
         </div>
 
         {/* Modal for Login/Signup */}
-        {!isAuthenticated &&  showModal && (
-      <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-        <div className="bg-white p-10 rounded-lg w-96 shadow-lg transform transition-all duration-300 scale-100 hover:scale-105">
-          <h2 className="text-3xl mb-6 text-center text-gray-800">{isSignup ? 'Sign Up' : 'Login'}</h2>
-          
-          {/* Login or Signup Form */}
-          <form onSubmit={(e) => { e.preventDefault(); isSignup ? handleSignup() : handleLogin(); }}>
-            {/* Username or Email Field */}
-            <div className="mb-6">
-              <div className="relative">
-                <div className="flex items-center absolute left-3 top-2 text-gray-400">
-                  <FaUser />
+        {!isAuthenticated && showModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+            <div className="bg-white p-10 rounded-lg w-96 shadow-lg">
+              <h2 className="text-3xl mb-6 text-center text-gray-800">{isSignup ? 'Admin Sign Up' : 'Admin Login'}</h2>
+
+              {/* Login or Signup Form */}
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                isSignup ? handleSignup() : handleLogin();
+              }}>
+                {/* Email Field */}
+                <div className="mb-6">
+                  <div className="relative">
+                    <FaUser className="absolute left-3 top-4 text-gray-400" />
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full p-3 pl-10 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
                 </div>
-                <input
-                  type="text"
-                  placeholder={isSignup ? 'Username' : 'Email'}
-                  className="w-full p-3 pl-10 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-                />
-              </div>
-            </div>
 
-            {/* Password Field */}
-            <div className="mb-6">
-              <div className="relative">
-                <div className="flex items-center absolute left-3 top-2 text-gray-400">
-                  <FaLock />
+                {/* Password Field */}
+                <div className="mb-6">
+                  <div className="relative">
+                    <FaLock className="absolute left-3 top-4 text-gray-400" />
+                    <input
+                      type="password"
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full p-3 pl-10 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
                 </div>
-                <input
-                  type="password"
-                  placeholder="Password"
-                  className="w-full p-3 pl-10 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-                />
-              </div>
+
+                {/* Submit Button */}
+                <button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-teal-400 text-white p-3 rounded-lg flex items-center justify-center space-x-2">
+                  <FaSignInAlt />
+                  <span>{isSignup ? 'Sign Up' : 'Login'}</span>
+                </button>
+              </form>
+
+              {/* Switch to Sign Up / Login */}
+              <p className="text-sm mt-4 text-center text-gray-600">
+                {isSignup ? (
+                  <>
+                    Already have an account?{' '}
+                    <button onClick={() => setIsSignup(false)} className="text-blue-500 hover:underline">Login</button>
+                  </>
+                ) : (
+                  <>
+                    Don't have an account?{' '}
+                    <button onClick={() => setIsSignup(true)} className="text-blue-500 hover:underline">Sign Up</button>
+                  </>
+                )}
+              </p>
             </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-blue-500 to-teal-400 text-white p-3 rounded-lg hover:from-blue-400 hover:to-teal-500 transition-all duration-300 flex items-center justify-center space-x-2"
-            >
-              <FaSignInAlt />
-              <span>{isSignup ? 'Sign Up' : 'Login'}</span>
-            </button>
-          </form>
-
-          {/* Switch to Sign Up / Login */}
-          <p className="text-sm mt-4 text-center text-gray-600">
-            {isSignup ? (
-              <>
-                Already have an account?{' '}
-                <button
-                  onClick={() => setIsSignup(false)}
-                  className="text-blue-500 hover:underline"
-                >
-                  Login
-                </button>
-              </>
-            ) : (
-              <>
-                Don't have an account?{' '}
-                <button
-                  onClick={() => setIsSignup(true)}
-                  className="text-blue-500 hover:underline"
-                >
-                  Sign Up
-                </button>
-              </>
-            )}
-          </p>
-        </div>
-      </div>
+          </div>
         )}
-        </div>
+      </div>
     </Router>
   );
 };
