@@ -146,67 +146,71 @@ const Purchase = () => {
 
       {/* Modal for Creating Purchase Order */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-sm">
-            <h2 className="text-2xl font-semibold mb-4">Create Purchase Order</h2>
-            <form onSubmit={handleFormSubmit}>
-              <input
-                type="text"
-                name="name"
-                placeholder="Product Name"
-                className="w-full mb-4 p-3 border rounded"
-                value={newProduct.name}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="text"
-                name="color"
-                placeholder="Color"
-                className="w-full mb-4 p-3 border rounded"
-                value={newProduct.color}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="text"
-                name="category"
-                placeholder="Category"
-                className="w-full mb-4 p-3 border rounded"
-                value={newProduct.category}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="text"
-                name="price"
-                placeholder="Price"
-                className="w-full mb-4 p-3 border rounded"
-                value={newProduct.price}
-                onChange={handleInputChange}
-                required
-              />
-              <div className="flex justify-between mt-4 gap-4">
-                <button
-                  type="button"
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                  onClick={() => setShowModal(false)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                  Submit
-                </button>
-              </div>
-            </form>
-          </div>
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 ">
+    <div className="bg-white rounded-lg p-6 w-full max-w-xs x-small:ml-10  sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl">
+      <h2 className="text-2xl font-semibold mb-4">Create Purchase Order</h2>
+      <form onSubmit={handleFormSubmit}>
+        <input
+          type="text"
+          name="name"
+          placeholder="Product Name"
+          className="w-full mb-4 p-3 border rounded"
+          value={newProduct.name}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="text"
+          name="color"
+          placeholder="Color"
+          className="w-full mb-4 p-3 border rounded"
+          value={newProduct.color}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="text"
+          name="category"
+          placeholder="Category"
+          className="w-full mb-4 p-3 border rounded"
+          value={newProduct.category}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="text"
+          name="price"
+          placeholder="Price"
+          className="w-full mb-4 p-3 border rounded"
+          value={newProduct.price}
+          onChange={handleInputChange}
+          required
+        />
+        <div className="flex justify-between mt-4 gap-4">
+          <button
+            type="button"
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            onClick={() => setShowModal(false)}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Submit
+          </button>
         </div>
-      )}
+      </form>
+    </div>
+  </div>
+)}
+
 
       {/* Popup for Viewing Product Details */}
       {showPopup && selectedProduct && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-xs">
+       <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 ">
+    <div className="bg-white rounded-lg p-6 w-full max-w-xs x-small:ml-10  sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl">
             <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
             <p><strong>Name:</strong> {selectedProduct.name}</p>
             <p><strong>Color:</strong> {selectedProduct.color}</p>

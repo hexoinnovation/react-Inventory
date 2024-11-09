@@ -116,8 +116,8 @@ const Suppliers = () => {
 
       {/* Modal for Adding Contact */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white rounded-lg p-8 w-full max-w-md">
+         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 ">
+    <div className="bg-white rounded-lg p-6 w-full max-w-xs x-small:ml-10  sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl">
             <h2 className="text-2xl font-semibold mb-4"> Create Suppliers</h2>
             <form onSubmit={handleFormSubmit}>
               <input
@@ -166,8 +166,8 @@ const Suppliers = () => {
 
       {/* Popup for Viewing Contact Details */}
       {showPopup && selectedContact && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white rounded-lg p-8 w-full max-w-md">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 ">
+    <div className="bg-white rounded-lg p-6 w-full max-w-xs x-small:ml-10  sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl">
             <h2 className="text-2xl font-semibold mb-4">Contact Details</h2>
             <p><strong>ID:</strong> {selectedContact.id}</p>
             <p><strong>Name:</strong> {selectedContact.name}</p>
