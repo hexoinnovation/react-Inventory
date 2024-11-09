@@ -147,7 +147,7 @@ const Purchase = () => {
       {/* Modal for Creating Purchase Order */}
       {showModal && (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 ">
-    <div className="bg-white rounded-lg p-6 w-full max-w-xs x-small:ml-10  sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl">
+    <div className="bg-white rounded-lg p-6 w-full max-w-xs x-small:ml-12  sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl">
       <h2 className="text-2xl font-semibold mb-4">Create Purchase Order</h2>
       <form onSubmit={handleFormSubmit}>
         <input
@@ -209,9 +209,8 @@ const Purchase = () => {
 
       {/* Popup for Viewing Product Details */}
       {showPopup && selectedProduct && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-xs">
-            <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
+         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 ">
+    <div className="bg-white rounded-lg p-6 w-full max-w-xs x-small:ml-12  sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl">
             <p><strong>Name:</strong> {selectedProduct.name}</p>
             <p><strong>Color:</strong> {selectedProduct.color}</p>
             <p><strong>Category:</strong> {selectedProduct.category}</p>
