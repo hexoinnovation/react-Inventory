@@ -1,24 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
-import { AiOutlineDownload, AiOutlineEye } from 'react-icons/ai';
+import { AiOutlineDownload, AiOutlineEye } from 'react-icons/ai'; // Correct, no need to import AiOutlineDownload twice
 import { MdOutlineAddCircle } from "react-icons/md";
-import { doc, setDoc, collection } from "firebase/firestore";
+import { doc, setDoc, collection, deleteDoc, getDocs } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { auth } from '../config/firebase'; // Make sure you have firebase authentication set up
 import { useAuthState } from 'react-firebase-hooks/auth'; // To get current user
+import { jsPDF } from 'jspdf';
+import * as XLSX from 'xlsx';
+
+
 
 const Purchase = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: 'Apple MacBook Pro 17"',
-      color: 'Silver',
-      category: 'Laptop',
-      price: '$2999',
-    },
-  ]);
+  const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -29,12 +25,28 @@ const Purchase = () => {
 
   // Get the current logged-in user
   const [user] = useAuthState(auth); // Returns current authenticated user
+  // Fetch products when the component mounts or when the user changes
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!user) return; // Only fetch if the user is logged in
+      try {
+        const userEmail = user.email; // Get the email of the logged-in user
+        const userDocRef = doc(db, "admins", userEmail); // Reference to the 'admins' collection using the user's email
+        const productRef = collection(userDocRef, "products"); // Reference to the 'products' subcollection
 
-  // Handle form field changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewProduct((prev) => ({ ...prev, [name]: value }));
-  };
+        const productSnapshot = await getDocs(productRef); // Fetch all products
+        const productList = productSnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id, // Include the document ID as the 'id' for the product
+        }));
+        setProducts(productList); // Update state with the fetched products
+      } catch (error) {
+        console.error("Error fetching products from Firestore: ", error);
+      }
+    };
+
+    fetchProducts();
+  }, [user]); // Run this effect when the user changes (logged in/out)
 
   // Handle form submission to add new product and store in Firebase
   const handleFormSubmit = async (e) => {
@@ -45,21 +57,23 @@ const Purchase = () => {
       return;
     }
 
-    // Add the new product to the products list in state
-    setProducts((prev) => [...prev, { ...newProduct, id: prev.length + 1 }]);
-
     try {
-      // Use the logged-in user's email for the document path
       const userEmail = user.email; // Get the email of the logged-in user
-
-      // Create a document reference for the user in Firestore
       const userDocRef = doc(db, "admins", userEmail); // Reference to the 'admins' collection using the user's email
       const productRef = collection(userDocRef, "products"); // Reference to the 'products' subcollection
 
-      // Set the product document
+      // Add the new product to Firestore
       await setDoc(doc(productRef, newProduct.name), newProduct);
 
       alert("Product added successfully!");
+
+      // After adding the product, fetch the updated list
+      const productSnapshot = await getDocs(productRef);
+      const productList = productSnapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setProducts(productList); // Update state with the fetched products
     } catch (error) {
       console.error("Error adding product to Firestore: ", error);
     }
@@ -68,10 +82,67 @@ const Purchase = () => {
     setNewProduct({ name: '', color: '', category: '', price: '' });
   };
 
-  // Handle removing product from the list
-  const handleRemoveProduct = (productId) => {
-    setProducts(products.filter((product) => product.id !== productId));
+  // Handle form field changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewProduct((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Function to remove product from Firestore and update the state
+  const handleRemoveProduct = async (productName) => {
+    console.log("Removing product with name: ", productName); // Debugging log
+
+    if (!user) {
+      alert("Please log in to remove a product.");
+      return;
+    }
+
+    try {
+      const userEmail = user.email;
+
+      // Reference to the product document using the product name as the document ID
+      const productDocRef = doc(db, "admins", userEmail, "products", productName);
+      
+      // Delete the product document from Firestore
+      await deleteDoc(productDocRef);
+
+      // Remove from local state after deletion
+      setProducts((prevProducts) => {
+        const updatedProducts = prevProducts.filter((product) => product.name !== productName);
+        console.log("Updated Products: ", updatedProducts); // Debugging log
+        return updatedProducts;
+      });
+
+      alert("Product removed successfully!");
+    } catch (error) {
+      console.error("Error removing product from Firestore: ", error.message);
+      alert(`Error removing product: ${error.message}`);
+    }
+
+    // Close the popup after deletion
     setShowPopup(false);
+  };
+
+  const handleDownload = async (userDocRef) => {
+    try {
+      // Reference to the 'products' collection
+      const productRef = collection(userDocRef, "products");
+  
+      // Fetch data from Firestore
+      const querySnapshot = await getDocs(productRef);
+      const data = querySnapshot.docs.map(doc => doc.data()); // Extract data from documents
+  
+      // Create Excel sheet
+      const ws = XLSX.utils.json_to_sheet(data); // Convert Firestore data to Excel sheet
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+  
+      // Write Excel file
+      XLSX.writeFile(wb, "products.xlsx");
+  
+    } catch (error) {
+      console.error("Error downloading products:", error);
+    }
   };
 
   return (
@@ -104,10 +175,13 @@ const Purchase = () => {
             </div>
           </button>
 
-          <button className="px-2 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
-            <AiOutlineDownload className="w-5 h-5 inline mr-2" />
-            <span>SVC</span>
-          </button>
+          <button
+   onClick={() => handleDownload(doc(db, "admins", user.email))}
+   className="px-2 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+>
+  <AiOutlineDownload className="w-5 h-5 inline mr-2" />
+  <span>SVC</span>
+</button>
         </div>
       </div>
 
@@ -144,8 +218,8 @@ const Purchase = () => {
         </table>
       </div>
 
-      {/* Modal for Creating Purchase Order */}
-      {showModal && (
+            {/* Modal for Creating Purchase Order */}
+            {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-sm">
             <h2 className="text-2xl font-semibold mb-4">Create Purchase Order</h2>
@@ -203,26 +277,35 @@ const Purchase = () => {
         </div>
       )}
 
-      {/* Popup for Viewing Product Details */}
-      {showPopup && selectedProduct && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-xs">
-            <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
-            <p><strong>Name:</strong> {selectedProduct.name}</p>
-            <p><strong>Color:</strong> {selectedProduct.color}</p>
-            <p><strong>Category:</strong> {selectedProduct.category}</p>
-            <p><strong>Price:</strong> {selectedProduct.price}</p>
-            <div className="flex justify-end mt-4">
-              <button
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                onClick={() => handleRemoveProduct(selectedProduct.id)}
-              >
-                Remove Product
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
+      {/* // Popup for Viewing Product Details */}
+{showPopup && selectedProduct && (
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+    <div className="bg-white rounded-lg p-6 w-full max-w-xs relative">
+      <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
+      <p><strong>Name:</strong> {selectedProduct.name}</p>
+      <p><strong>Color:</strong> {selectedProduct.color}</p>
+      <p><strong>Category:</strong> {selectedProduct.category}</p>
+      <p><strong>Price:</strong> {selectedProduct.price}</p>
+      
+      <div className="flex justify-end mt-4 gap-2">
+      <button
+  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+  onClick={() => handleRemoveProduct(selectedProduct.name)} // Pass product.name to remove the product
+>
+  Remove
+</button>
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          onClick={() => setShowPopup(false)}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
