@@ -2,27 +2,28 @@ import React, { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { AiOutlineDownload, AiOutlineEye } from 'react-icons/ai';
 import { MdOutlineAddCircle } from "react-icons/md";
+import { doc, setDoc, collection, deleteDoc, getDocs } from "firebase/firestore";
+import { db } from "../config/firebase";
+import { auth } from '../config/firebase'; // Make sure you have firebase authentication set up
+import { useAuthState } from 'react-firebase-hooks/auth'; // To get current user
+import { jsPDF } from 'jspdf';
+import * as XLSX from 'xlsx';
 
 
 const Suppliers = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const [contacts, setContacts] = useState([
-    {
-      id: 1,
-      name: 'John Doe',
-      phone: '123-456-7890',
-      address: '123 Main St, City, State',
-    },
-    // More initial contacts if needed
-  ]);
+  const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
   const [newContact, setNewContact] = useState({
     name: '',
     phone: '',
     address: '',
   });
+  const [user] = useAuthState(auth); 
 
+
+  
   // Handle form field changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
