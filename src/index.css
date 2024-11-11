@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Faculty+Glyphic&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -76,6 +76,18 @@ body {
 #sidebar.hide {
 	width: 60px;
 }
+#sidebar.hide .side-menu .label {
+	display: none
+}
+#sidebar .side-menu .label {
+	background-color:#69acf0;
+	color: #242225;
+	padding: 3px;
+	margin-top: 5px;
+	border-radius: 8px;
+	
+
+}
 #sidebar .brand {
 	font-size: 24px;
 	font-weight: 700;
@@ -100,26 +112,35 @@ body {
 	width: 100%;
 	margin-top: 48px;
 }
+
+
 * #sidebar .side-menu .active {
 	height: 48px;
 	background: transparent;
 	margin-left: 6px;
 	border-radius: 48px 0 0 48px;
 	padding: 4px;
+	
 }
+
+
 #sidebar .side-menu .drop-active .active {
 	height: 48px;
 	background: transparent;
 	margin-left: 20px;
 	border-radius: 48px 0 0 48px;
 	padding: 4px;
-
-
 }
+#sidebar .side-menu li{
+	margin-top: 8px;
+}
+
+
 #sidebar .side-menu li.active {
-	background: var(--grey);
+	background-color: #3C91E6;
 	position: relative;
 }
+
 #sidebar .side-menu li .drop {
 	margin-left: 28px;
 }
@@ -131,7 +152,7 @@ body {
 	color: var(--blue);
 	pointer-events: unset;
 }
-/* #sidebar .side-menu li.active::before {
+#sidebar .side-menu li.active::before {
 	content: '';
 	position: absolute;
 	width: 40px;
@@ -141,8 +162,8 @@ body {
 	right: 0;
 	box-shadow: 20px 20px 0 var(--grey);
 	z-index: -1;
-} */
-/* #sidebar .side-menu li.active::after {
+} 
+ #sidebar .side-menu li.active::after {
 	content: '';
 	position: absolute;
 	width: 40px;
@@ -152,7 +173,9 @@ body {
 	right: 0;
 	box-shadow: 20px -20px 0 var(--grey);
 	z-index: -1;
-} */
+}
+
+
 #sidebar .side-menu li a {
 	width: 100%;
 	height: 100%;
@@ -167,6 +190,7 @@ body {
 }
 #sidebar .side-menu.top li.active a {
 	color: var(--blue);
+	background-color: #3C91E6;
 }
 #sidebar.hide .side-menu li a {
 	width: calc(48px - (4px * 2));
@@ -205,35 +229,7 @@ body {
 	font-size: 20px;
   }
   
-  /* Dropdown Menu */
-  
-  #sidebar .side-menu .dropdown-menu {
-	display: block;
-	background: var(--light);
-	margin-left: 20px;
-	border-radius: 8px;
-	padding-left: 10px;
-  }
-  
-  #sidebar .side-menu .dropdown-menu li {
-	padding: 10px 0;
-  }
-  
-  #sidebar .side-menu .dropdown-menu li a {
-	/* color: var(--dark); */
-	padding: 6px 12px;
-	display: block;
-	border-radius: 4px;
-	text-decoration: none;
-	transition: background 0.3s ease;
-  }
-  
-  #sidebar .side-menu .dropdown-menu li a:hover {
-	background: var(--light-blue);
-	color: var(--blue);
-  }
-/* SIDEBAR */
-
+ /* SIDEBAR  */
 
 
 
@@ -377,15 +373,15 @@ body {
 }
 
 #content nav .profile img {
-	width: 36px;
-	height: 36px;
+	width: 32px;
+	height: 32px;
 	object-fit: cover;
 	border-radius: 50%;
 }
 #content nav .switch-mode {
 	display: block;
 	min-width: 50px;
-	height: 25px;
+	height: 22px;
 	border-radius: 25px;
 	background: var(--grey);
 	cursor: pointer;
@@ -406,46 +402,7 @@ body {
 	left: calc(100% - (25px - 4px) - 2px);
 }
 
-/* CSS for Navbar */
-.search-form {
-  display: flex;
-  align-items: center;
-}
 
-.search-btn {
-  display: flex;
-}
-
-/* Hide search icon on screens <= 550px */
-@media (max-width: 550px) {
-  .search-form {
-    display: none;  /* Hide the entire search form */
-  }
-
-  /* Optionally, you can also hide the search button itself if you don't want the icon visible */
-  .search-btn {
-    display: none;
-  }
-
-  .bx-search {
-    display: none;
-  }
-}
-
-/* Show the search form and icon when the screen width is greater than 550px */
-@media (min-width: 551px) {
-  .search-form {
-    display: flex; /* Show search bar */
-  }
-
-  .search-btn {
-    display: flex; /* Show search button */
-  }
-
-  .bx-search {
-    display: block; /* Show search icon */
-  }
-}
 
 /* NAVBAR */
 
@@ -693,8 +650,11 @@ body {
 
 
 
-@media screen and (max-width: 576px) {
+@media screen and (max-width: 768px) {
 	#content nav form .form-input input {
+		display: none;
+	}
+	#content nav form .form-input  .search-btn {
 		display: none;
 	}
 

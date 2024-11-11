@@ -16,8 +16,13 @@ export default {
       "extra-large":"1200px",
       "xx-large":"1400px"
     },
-    extend: {},
+    extend: {
+      fontFamily: {
+        label: ["Host Grotesk", "sans-serif"], 
+      
+    },
   },
   plugins: [],
+}
 }
 
