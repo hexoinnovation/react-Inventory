@@ -9,7 +9,7 @@ import Sales from './pages/Sales';
 import Settings from './pages/Settings';
 import Account from './pages/Account';
 import Dashboard from './pages/Dashboard';
-import Suppliers from './pages/Suppliers';
+
 import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from './config/firebase';
 import { FaUser, FaLock, FaSignInAlt } from 'react-icons/fa';
 import { db } from './config/firebase'; // Import Firestore database
