@@ -123,7 +123,6 @@ const Purchase = () => {
             <option value="Tablet">Tablet</option>
           </select>
         </div>
-
         {/* Create Purchase Order and Download Button */}
         <div className="flex x-small:flex-col medium:flex-row gap-2 x-small:ml-10 ">
           <button
@@ -156,6 +155,7 @@ const Purchase = () => {
         <table className="w-full text-sm text-left text-white">
           <thead className="text-xs text-black uppercase bg-blue-200">
             <tr>
+<<<<<<< HEAD
               <th scope="col" className="px-6 py-3">
                 SName
               </th>
@@ -183,11 +183,20 @@ const Purchase = () => {
               <th scope="col" className="px-6 py-3">
                 Action
               </th>
+=======
+              <th scope="col" className="px-6 py-3">Product Id</th>   
+              <th scope="col" className="px-6 py-3">Product Name</th>
+              <th scope="col" className="px-6 py-3">Category</th>
+              {/* <th scope="col" className="px-6 py-3">Category</th> */}
+              <th scope="col" className="px-6 py-3">Price</th>
+              <th scope="col" className="px-6 py-3">Action</th>
+>>>>>>> ca2587b6690b9105e578d9e84abc2512781a402a
             </tr>
           </thead>
           <tbody className="bg-gray-200 text-black">
             {filteredProducts.map((product) => (
               <tr key={product.id} className="border-b hover:bg-gray-50">
+<<<<<<< HEAD
                 <td className="px-6 py-4 font-medium">{product.sname}</td>
                 <td className="px-6 py-4 font-medium">{product.phone}</td>
                 <td className="px-6 py-4">{product.add}</td>
@@ -195,6 +204,12 @@ const Purchase = () => {
                 <td className="px-6 py-4">{product.pname}</td>
                 <td className="px-6 py-4">{product.categories}</td>
                 <td className="px-6 py-4">{product.qnt}</td>
+=======
+                <td className="px-6 py-4 font-medium">{product.id}</td>
+                <td className="px-6 py-4 font-medium">{product.name}</td>
+                {/* <td className="px-6 py-4">{product.color}</td> */}
+                <td className="px-6 py-4">{product.category}</td>
+>>>>>>> ca2587b6690b9105e578d9e84abc2512781a402a
                 <td className="px-6 py-4">{product.price}</td>
 
                 <td className="px-6 py-4">
@@ -228,6 +243,19 @@ const Purchase = () => {
                   >
                     <RiDeleteBin5Line className="text-red-600 text-xl" />
                   </button>
+                  <button
+    className="text-yellow-600 hover:text-yellow-700"
+    onClick={() => { setShowPopup(true); setSelectedProduct(product); }}
+  >
+    <AiOutlineEdit className="w-5 h-5" />
+  </button>
+
+  <button
+    className="text-red-600 hover:text-red-700"
+    onClick={() => { setShowPopup(true); setSelectedProduct(product); }}
+  >
+    <AiOutlineDelete className="w-5 h-5" />
+  </button>
                 </td>
               </tr>
             ))}
@@ -347,6 +375,7 @@ const Purchase = () => {
 
       {/* Popup for Viewing Product Details */}
       {showPopup && selectedProduct && (
+<<<<<<< HEAD
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 ">
           <div className="bg-white rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-xs large:max-w-sm extra-large:max-w-md xx-large:max-w-lg max-h-[80vh] overflow-y-auto">
             <p>
@@ -379,6 +408,25 @@ const Purchase = () => {
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                 onClick={() => setShowPopup(false)}
               >
+=======
+         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 ">
+    <div className="bg-white rounded-lg p-6 w-full max-w-xs x-small:ml-12  sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl">
+            <p><strong>Name:</strong> {selectedProduct.name}</p>
+            <p><strong>Color:</strong> {selectedProduct.color}</p>
+            <p><strong>Category:</strong> {selectedProduct.category}</p>
+            <p><strong>Price:</strong> {selectedProduct.price}</p>
+            <div className="flex justify-end mt-4 gap-2">
+            <button
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                onClick={() => handleRemoveContact(selectedContact.id)}
+              >
+                Remove
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                onClick={() => setShowPopup(false)}
+              >
+>>>>>>> ca2587b6690b9105e578d9e84abc2512781a402a
                 Close
               </button>
             </div>
