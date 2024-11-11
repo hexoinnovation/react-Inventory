@@ -91,7 +91,6 @@ const Purchase = () => {
             placeholder="Search for items"
           />
         </div>
-
         {/* Create Purchase Order and Download Button */}
         <div className="flex flex-col gap-2">
           <button
