@@ -122,7 +122,6 @@ const handleCreateProduct = async () => {
   }
 };
 
-
   // Handle category filter change
   const handleCategoryFilterChange = (e) => {
     setFilteredCategory(e.target.value);
