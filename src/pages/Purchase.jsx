@@ -1,11 +1,21 @@
 import React, { useState } from "react";
 import { FaEdit } from "react-icons/fa";
-import { AiOutlineDownload, AiOutlineEye } from "react-icons/ai";
-import { FaCloudDownloadAlt,FaStreetView } from "react-icons/fa";
+import {  AiOutlineEye } from "react-icons/ai";
+import { IoBagAdd } from "react-icons/io5";
+import { BsFiletypePdf } from "react-icons/bs";
 
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { MdOutlineAddCircle } from "react-icons/md";
-import { doc, setDoc, collection, query, where, getDocs, writeBatch, deleteDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  writeBatch,
+  deleteDoc,
+} from "firebase/firestore";
 import { db } from "../config/firebase";
 import { auth } from "../config/firebase"; // Make sure you have firebase authentication set up
 import { useAuthState } from "react-firebase-hooks/auth"; // To get current user
@@ -13,6 +23,7 @@ import { useAuthState } from "react-firebase-hooks/auth"; // To get current user
 const Purchase = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [viewPopup,setViewPopup] = useState(false);
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [newProduct, setNewProduct] = useState({
@@ -78,50 +89,57 @@ const Purchase = () => {
     });
   };
 
- // Handle removing all products for a supplier
-const handleRemoveProduct = async (Suppliername) => {
-  try {
-    // Reference to the user's product collection
-    const userCollectionRef = collection(db, "admins", user.email, "products");
+  // Handle removing all products for a supplier
+  const handleRemoveProduct = async (Suppliername) => {
+    try {
+      // Reference to the user's product collection
+      const userCollectionRef = collection(
+        db,
+        "admins",
+        user.email,
+        "products"
+      );
 
-    // Get all products for this supplier
-    const supplierQuery = query(userCollectionRef, where("sname", "==", Suppliername));
-    const querySnapshot = await getDocs(supplierQuery);
+      // Get all products for this supplier
+      const supplierQuery = query(
+        userCollectionRef,
+        where("sname", "==", Suppliername)
+      );
+      const querySnapshot = await getDocs(supplierQuery);
 
-    // Delete each product document that matches the supplier name
-    const batch = writeBatch(db);
-    querySnapshot.forEach((doc) => {
-      batch.delete(doc.ref);
-    });
-    await batch.commit();
+      // Delete each product document that matches the supplier name
+      const batch = writeBatch(db);
+      querySnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      await batch.commit();
 
-    // Remove from the local state (table) by filtering out the supplier's products
-    setProducts((prevProducts) => prevProducts.filter((product) => product.sname !== Suppliername));
+      // Remove from the local state (table) by filtering out the supplier's products
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.sname !== Suppliername)
+      );
 
-    alert(`All products for ${Suppliername} deleted successfully!`);
-  } catch (error) {
-    console.error("Error deleting products for supplier: ", error);
-    alert("Error deleting products for supplier. Please try again.");
-  }
-};
+      alert(`All products for ${Suppliername} deleted successfully!`);
+    } catch (error) {
+      console.error("Error deleting products for supplier: ", error);
+      alert("Error deleting products for supplier. Please try again.");
+    }
+  };
 
-
-
-// Function to handle product creation
-const handleCreateProduct = async () => {
-  try {
-    await addDoc(productRef, {
-      name: productName,
-      price: parseFloat(productPrice),
-    });
-    setShowModal(false);
-    setProductName('');
-    setProductPrice('');
-  } catch (error) {
-    console.error("Error adding document: ", error);
-  }
-};
-
+  // Function to handle product creation
+  const handleCreateProduct = async () => {
+    try {
+      await addDoc(productRef, {
+        name: productName,
+        price: parseFloat(productPrice),
+      });
+      setShowModal(false);
+      setProductName("");
+      setProductPrice("");
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
 
   // Handle category filter change
   const handleCategoryFilterChange = (e) => {
@@ -135,13 +153,9 @@ const handleCreateProduct = async () => {
 
   return (
     <div className="container mx-auto p-4 mt-10">
-      <div className="flex small:flex-row justify-between x-small:flex-col">
+    
         <h1 className="text-4xl font-bold text-gray-600">Purchase</h1>
-        <button className="px-1 py-1 text-white bg-blue-500 rounded-full hover:bg-blue-600 w-40 x-small:mt-5 small:mt-0">
-          <FaCloudDownloadAlt className="w-5 h-5 inline mr-2" />
-          <span>Download PDF</span>
-        </button>
-      </div>
+     
 
       {/* Filter and Button Section */}
       <div className="flex justify-between mt-10 ">
@@ -171,25 +185,18 @@ const handleCreateProduct = async () => {
           >
             <div className="flex gap-1">
               <span className="text-2xl">
-                <MdOutlineAddCircle />
+                < IoBagAdd  />
               </span>
-              <span className="text-base">Create</span>
+              <span className="text-base font-bold">Create</span>
             </div>
           </button>
+          <button className="px-1 py-1 text-white font-bold bg-blue-500 rounded-full hover:bg-blue-600 w-24">
+          <BsFiletypePdf className="w-5 h-6 inline mr-1" />
+          <span>Print</span>
+        </button>
+
           
         </div>
-
-        <button
-            className="px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-            onClick={() => setShowModal(true)}
-          >
-            <div className="flex gap-1">
-              <span className="text-2xl">
-                <FaStreetView /> 
-              </span>
-              <span className="text-base">View</span>
-            </div>
-          </button>
       </div>
 
       {/* Table */}
@@ -198,25 +205,25 @@ const handleCreateProduct = async () => {
           <thead className="text-xs text-black uppercase bg-blue-200">
             <tr>
               <th scope="col" className="px-6 py-3">
-              Supplier Name
+                Supplier Name
               </th>
               <th scope="col" className="px-6 py-3">
-              Phone Number
+                Phone Number
               </th>
               <th scope="col" className="px-6 py-3">
-              Address
+                Address
               </th>
               <th scope="col" className="px-6 py-3">
                 Id
               </th>
               <th scope="col" className="px-6 py-3">
-              Product Name
+                Product Name
               </th>
               <th scope="col" className="px-6 py-3">
                 Categories
               </th>
               <th scope="col" className="px-6 py-3">
-              Quantity
+                Quantity
               </th>
               <th scope="col" className="px-6 py-3">
                 Price
@@ -260,14 +267,13 @@ const handleCreateProduct = async () => {
                     <FaEdit className="text-green-600 text-xl ml-1" />
                   </button>
 
-                  
                   {/* Delete Icon */}
-<button
-  className="text-red-600 hover:underline ml-2"
-  onClick={() => handleRemoveProduct(product.sname)}
->
-  <RiDeleteBin5Line className="text-red-600 text-xl" />
-</button>
+                  <button
+                    className="text-red-600 hover:underline ml-2"
+                    onClick={() => handleRemoveProduct(product.sname)}
+                  >
+                    <RiDeleteBin5Line className="text-red-600 text-xl" />
+                  </button>
                 </td>
               </tr>
             ))}
@@ -276,136 +282,228 @@ const handleCreateProduct = async () => {
       </div>
 
       {/* Modal for Creating Purchase Order */}
-      {showModal && (
+     {showModal && (
+  <div className="fixed inset-0 flex  items-center justify-center bg-gray-800 bg-opacity-50 z-50  ">
+    <div className="bg-blue-200 rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-lg large:max-w-lg extra-large:max-w-lg xx-large:max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
+      <h2 className="text-2xl font-serif text-teal-600 mb-4">
+        Create Purchase Order
+      </h2>
+      <form onSubmit={handleFormSubmit}>
+        {/* Supplier Name Input */}
+        <div className=" flex x-small:flex-col medium:flex-row w-full">
+
+        <div className="mb-4 medium:w-3/4">
+          <label htmlFor="sname" className="block text-sm font-medium text-gray-700 mb-1">Supplier Name</label>
+          <input
+            type="text"
+            name="sname"
+            id="sname"
+            placeholder="Enter Supplier Name"
+            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+            value={newProduct.sname}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+
+        {/* Phone Input */}
+        <div className="mb-4 medium:ml-5 medium:w-3/4">
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+          <input
+            type="text"
+            name="phone"
+            id="phone"
+            placeholder="Enter Phone Number"
+            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+            value={newProduct.phone}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        </div>
+
+        {/* Address Input */}
+        <div className=" flex x-small:flex-col medium:flex-row w-full">
+        <div className="mb-4  medium:w-3/4">
+          <label htmlFor="add" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+          <input
+            type="text"
+            name="add"
+            id="add"
+            placeholder="Enter Address"
+            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+            value={newProduct.add}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+
+        {/* ID Input */}
+        <div className="mb-4  medium:ml-5  medium:w-3/4">
+          <label htmlFor="id" className="block text-sm font-medium text-gray-700 mb-1">ID</label>
+          <input
+            type="text"
+            name="id"
+            id="id"
+            placeholder="Enter ID"
+            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+            value={newProduct.id}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        </div>
+
+        {/* Product Name Input */}
+        <div className=" flex x-small:flex-col medium:flex-row w-full">
+        <div className="mb-4  medium:w-3/4">
+          <label htmlFor="pname" className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+          <input
+            type="text"
+            name="pname"
+            id="pname"
+            placeholder="Enter Product Name"
+            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+            value={newProduct.pname}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+
+        {/* Categories Input */}
+        <div className="mb-4  medium:ml-5  medium:w-3/4">
+          <label htmlFor="qnt" className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+          <input
+            type="number"
+            name="qnt"
+            id="qnt"
+            placeholder="Enter Quantity"
+            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+            value={newProduct.qnt}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        </div>
+
+        {/* Quantity Input */}
+        <div className=" flex x-small:flex-col medium:flex-row w-full">
+        <div className="mb-4   medium:w-3/4">
+          <label htmlFor="categories" className="block text-sm font-medium text-gray-700 mb-1">Categories</label>
+          <input
+            type="text"
+            name="categories"
+            id="categories"
+            placeholder="Enter Categories"
+            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+            value={newProduct.categories}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+
+        {/* Price Input */}
+        <div className="mb-4  medium:ml-5  medium:w-3/4">
+          <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">Price</label>
+          <input
+            type="number"
+            name="price"
+            id="price"
+            placeholder="Enter Price"
+            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+            value={newProduct.price}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        </div>
+
+        <div className="flex justify-end gap-2 mt-4">
+          <button
+            type="button"
+            className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none"
+            onClick={() => setShowModal(false)}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 text-white bg-teal-500 rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+          >
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
+{viewPopup && selectedProduct && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-xs large:max-w-sm extra-large:max-w-sm xx-large:max-w-sm max-h-[80vh] overflow-y-auto">
-            <h2 className="text-2xl font-semibold mb-4">
-              Create Purchase Order
-            </h2>
-            <form onSubmit={handleFormSubmit}>
-              {/* Supplier Name Input */}
-              <input
-                type="text"
-                name="sname"
-                placeholder="Supplier Name"
-                className="w-full mb-4 p-3 border border-black rounded"
-                value={newProduct.sname}
-                onChange={handleInputChange}
-                required
-              />
-              {/* Phone Input */}
-              <input
-                type="text"
-                name="phone"
-                placeholder=" Phone Number"
-                className="w-full mb-4 p-3 border rounded border-black"
-                value={newProduct.phone}
-                onChange={handleInputChange}
-                required
-              />
-              {/* Address Input */}
-              <input
-                type="text"
-                name="add"
-                placeholder="Add"
-                className="w-full mb-4 p-3 border rounded border-black"
-                value={newProduct.add}
-                onChange={handleInputChange}
-                required
-              />
-              {/* ID Input */}
-              <input
-                type="text"
-                name="id"
-                placeholder="ID"
-                className="w-full mb-4 p-3 border rounded border-black"
-                value={newProduct.id}
-                onChange={handleInputChange}
-                required
-              />
-              {/* Product Name Input */}
-              <input
-                type="text"
-                name="pname"
-                placeholder="Product Name"
-                className="w-full mb-4 p-3 border rounded border-black"
-                value={newProduct.pname}
-                onChange={handleInputChange}
-                required
-              />
-              {/* Categories Input */}
-              <input
-                type="text"
-                name="categories"
-                placeholder="Categories"
-                className="w-full mb-4 p-3 border rounded border-black"
-                value={newProduct.categories}
-                onChange={handleInputChange}
-                required
-              />
-              {/* Quantity Input */}
-              <input
-             type="number"
-             name="qnt"
-             placeholder="Quantity"
-             className="w-full mb-4 p-3 border rounded border-black"
-             value={newProduct.qnt}
-             onChange={handleInputChange}
-             required
-           />
-            {/* Price Input */}
-            <input
-             type="number"
-             name="price"
-             placeholder="Price"
-             className="w-full mb-4 p-3 border rounded border-black"
-             value={newProduct.price}
-             onChange={handleInputChange}
-             required
-           />
-           <div className="flex justify-end gap-2">
-             <button
-               type="button"
-               className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300"
-               onClick={() => setShowModal(false)}
-             >
-               Cancel
-             </button>
-             <button
-               type="submit"
-               className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
-             >
-               Save
-             </button>
-           </div>
-         </form>
-       </div>
-     </div>
-   )}
- {/* Popup for Viewing Product */}
- {showPopup && selectedProduct && (
-     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-       <div className="bg-white rounded-lg p-4 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-xs large:max-w-sm">
-         <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
-         <p><strong>Supplier Name:</strong> {selectedProduct.sname}</p>
-         <p><strong>Phone Number:</strong> {selectedProduct.phone}</p>
-         <p><strong>Address:</strong> {selectedProduct.add}</p>
-         <p><strong>ID:</strong> {selectedProduct.id}</p>
-         <p><strong>Product Name:</strong> {selectedProduct.pname}</p>
-         <p><strong>Categories:</strong> {selectedProduct.categories}</p>
-         <p><strong>Quantity:</strong> {selectedProduct.qnt}</p>
-         <p><strong>Price:</strong> {selectedProduct.price}</p>
-         <button
-           className="mt-4 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
-           onClick={() => setShowPopup(false)}
-         >
-           Close
-         </button>
-       </div>
-     </div>
-   )}
- </div>
-);
+          <div className="bg-white rounded-lg p-4 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-xs large:max-w-sm">
+            <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
+            <p>
+              <strong>Supplier Name:</strong> {selectedProduct.sname}
+            </p>
+            <p>
+              <strong>Phone Number:</strong> {selectedProduct.phone}
+            </p>
+            <p>
+              <strong>Address:</strong> {selectedProduct.add}
+            </p>
+            <button
+              className="mt-4 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+              onClick={() => setShowPopup(false)}
+            >
+              Close
+            </button>
+          </div>
+          </div>
+       
+      )}
+    
+    
+
+      {/* /* Popup for Viewing Product */ }
+      {showPopup && selectedProduct && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg p-4 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-xs large:max-w-sm">
+            <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
+            <p>
+              <strong>Supplier Name:</strong> {selectedProduct.sname}
+            </p>
+            <p>
+              <strong>Phone Number:</strong> {selectedProduct.phone}
+            </p>
+            <p>
+              <strong>Address:</strong> {selectedProduct.add}
+            </p>
+            <p>
+              <strong>ID:</strong> {selectedProduct.id}
+            </p>
+            <p>
+              <strong>Product Name:</strong> {selectedProduct.pname}
+            </p>
+            <p>
+              <strong>Categories:</strong> {selectedProduct.categories}
+            </p>
+            <p>
+              <strong>Quantity:</strong> {selectedProduct.qnt}
+            </p>
+            <p>
+              <strong>Price:</strong> {selectedProduct.price}
+            </p>
+            <button
+              className="mt-4 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+              onClick={() => setShowPopup(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default Purchase;

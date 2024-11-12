@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Import Link from React Router
-import { MdOutlineBookmarkBorder } from "react-icons/md";
-import { TbTruckDelivery } from "react-icons/tb";
+
 const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
   const [activeLink, setActiveLink] = useState("Dashboard"); // Default active link is Dashboard
 
@@ -53,12 +52,7 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
           </Link>
         </li>
 
-        <div className="label">
-          <li className="medium:ml-20 x-small:ml-10 mb-1">
-            <i className="bx bxs-package"></i>
-            <span className="ml-2 font-extrabold font-label">INVENTORY</span>
-          </li>
-        </div>
+        
 
         <li className={activeLink === "invoice" ? "active" : ""}>
           <Link to="/invoice" onClick={() => handleLinkClick("invoice")}>
@@ -66,6 +60,13 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
             <span className="text">Invoice</span>
           </Link>
         </li>
+
+        <div className="label">
+          <li className="medium:ml-20 x-small:ml-10 mb-1">
+            <i className="bx bxs-package"></i>
+            <span className="ml-2 font-extrabold font-label">ECOMMERCE</span>
+          </li>
+        </div>
 
         <li className={activeLink === "shop" ? "active" : ""}>
           <Link to="/shop" onClick={() => handleLinkClick("shop")}>
