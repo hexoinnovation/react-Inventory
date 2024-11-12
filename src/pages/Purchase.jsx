@@ -126,7 +126,6 @@ const Purchase = () => {
     }
   };
 
-<<<<<<< HEAD
   // Function to handle product creation
   const handleCreateProduct = async () => {
     try {
@@ -142,8 +141,6 @@ const Purchase = () => {
     }
   };
 
-=======
->>>>>>> d5b4fa7fbc3f69a8fc4ba9e4da61c67aa662243b
   // Handle category filter change
   const handleCategoryFilterChange = (e) => {
     setFilteredCategory(e.target.value);
