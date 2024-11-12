@@ -1,11 +1,11 @@
 import React from 'react'
 
-const Account = () => {
+const Shop = () => {
   return (
     <div>
-      <h1 className='text-5xl underline'>Account</h1>
+      <h1 className='text-5xl underline'>Shop</h1>
     </div>
   )
 }
 
-export default Account
+export default Shop

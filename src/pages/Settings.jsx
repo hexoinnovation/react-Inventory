@@ -1,11 +1,11 @@
 import React from 'react'
 
-const Settings = () => {
+const Order = () => {
   return (
     <div>
-      <h1>Settings</h1>
+      <h1>Order</h1>
     </div>
   )
 }
 
-export default Settings
+export default Order

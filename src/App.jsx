@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Sidebar from './Components/Sidebar';
 import Navbar from './Components/Navbar';
-import Inventory from './pages/Inventory';
+import Inventory from './pages/Stocks';
 import Purchase from './pages/Purchase';
 import Report from './pages/Report';
 import Sales from './pages/Sales';
@@ -14,6 +14,10 @@ import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from
 import { FaUser, FaLock, FaSignInAlt } from 'react-icons/fa';
 import { db } from './config/firebase'; // Import Firestore database
 import { doc, setDoc } from 'firebase/firestore'; // Firestore functions for adding data
+import Stocks from './pages/Stocks';
+import Attendence from './pages/Report';
+import Shop from './pages/Account';
+import Order from './pages/Settings';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -83,11 +87,12 @@ const App = () => {
             <Route path="/dashboard" element={isAuthenticated ? <Dashboard handleLogout={handleLogout} /> : <Navigate to="/" />} />
             <Route path="/purchase" element={isAuthenticated ? <Purchase /> : <Navigate to="/" />} />
            
-            <Route path="/inventory" element={isAuthenticated ? <Inventory /> : <Navigate to="/" />} />
+            <Route path="/stocks" element={isAuthenticated ? <Stocks /> : <Navigate to="/" />} />
             <Route path="/sales" element={isAuthenticated ? <Sales /> : <Navigate to="/" />} />
-            <Route path="/report" element={isAuthenticated ? <Report /> : <Navigate to="/" />} />
-            <Route path="/settings" element={isAuthenticated ? <Settings /> : <Navigate to="/" />} />
-            <Route path="/account" element={isAuthenticated ? <Account /> : <Navigate to="/" />} />
+            <Route path="/shop" element={isAuthenticated ? <Shop /> : <Navigate to="/" />} />
+            <Route path="/order" element={isAuthenticated ? <Order /> : <Navigate to="/" />} />
+            <Route path="/attendence" element={isAuthenticated ? <Attendence /> : <Navigate to="/" />} />
+            
           </Routes>
         </div>
 

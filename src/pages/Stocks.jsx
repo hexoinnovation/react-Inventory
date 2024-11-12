@@ -20,7 +20,7 @@ import { db } from "../config/firebase";
 import { auth } from "../config/firebase"; // Make sure you have firebase authentication set up
 import { useAuthState } from "react-firebase-hooks/auth"; // To get current user
 
-const Sales = () => {
+const Stocks = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const[editPopup,setEditPopup]=useState(false);
@@ -92,9 +92,9 @@ const Sales = () => {
       no: "",
       product: "",
       categories: "",
+      availableStocks: "",
       qnt: "",
-      rprice: "",
-      sprice: "",
+      price: "",
     });
   };
 
@@ -152,7 +152,7 @@ const Sales = () => {
 
   return (
     <div className="container mx-auto p-4 mt-10">
-      <h1 className="text-4xl font-bold text-gray-600">Sales</h1>
+      <h1 className="text-4xl font-bold text-gray-600">Stocks</h1>
 
       {/* Filter and Button Section */}
       <div className="flex justify-between mt-10 ">
@@ -208,16 +208,15 @@ const Sales = () => {
               <th scope="col" className="px-6 py-3">
                 Categories
               </th>
-           
+              <th scope="col" className="px-6 py-3">
+              Avaliable Stocks
+              </th>
+             
               <th scope="col" className="px-6 py-3">
                 Quantity
               </th>
               <th scope="col" className="px-6 py-3">
-         RPrice
-              </th>
-             
-              <th scope="col" className="px-6 py-3">
-               SPrice
+                Price
               </th>
               <th scope="col" className="px-6 py-3">
                 Action
@@ -230,9 +229,9 @@ const Sales = () => {
                 <td className="px-6 py-4 font-medium">{product.no}</td>
                 <td className="px-6 py-4 font-medium">{product.product}</td>
                 <td className="px-6 py-4">{product.categories}</td>
+                <td className="px-6 py-4">{product.availableStocks}</td>
                 <td className="px-6 py-4">{product.qnt}</td>
-                <td className="px-6 py-4">{product.rprice}</td>
-<td className="px-6 py-4">{product.sprice}</td>
+<td className="px-6 py-4">{product.price}</td>
 
                 <td className="px-6 py-4">
                   <button
@@ -344,18 +343,18 @@ const Sales = () => {
                 {/* ID Input */}
                 <div className="mb-4  medium:ml-5  medium:w-3/4">
                   <label
-                    htmlFor="quantity"
+                    htmlFor="availableStocks"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    quantity
+                    availableStocks
                   </label>
                   <input
                     type="text"
-                    name="qnt"
-                    id="qnt"
+                    name="availableStocks"
+                    id="availableStocks"
                     placeholder="Enter ID"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.qnt}
+                    value={newProduct.availableStocks}
                     onChange={handleInputChange}
                     required
                   />
@@ -370,36 +369,36 @@ const Sales = () => {
                 {/* Categories Input */}
                 <div className="mb-4   medium:w-3/4">
                   <label
-                    htmlFor="rprice"
+                    htmlFor="qnt"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Rprice
+                    Quantity
                   </label>
                   <input
                     type="number"
-                    name="rprice"
-                    id="srprice"
-                    placeholder="Rprice"
+                    name="qnt"
+                    id="qnt"
+                    placeholder="Enter Quantity"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.rprice}
+                    value={newProduct.qnt}
                     onChange={handleInputChange}
                     required
                   />
                 </div>
                 <div className="mb-4  medium:ml-5  medium:w-3/4">
                   <label
-                    htmlFor="sprice"
+                    htmlFor="price"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    SPrice
+                    Price
                   </label>
                   <input
                     type="number"
-                    name="sprice"
-                    id="sprice"
+                    name="price"
+                    id="price"
                     placeholder="Enter Price"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.sprice}
+                    value={newProduct.price}
                     onChange={handleInputChange}
                     required
                   />
@@ -584,6 +583,7 @@ const Sales = () => {
     </div>
   </div>
 )}
+
       {viewPopup && selectedProduct && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-4 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-xs large:max-w-sm">
@@ -622,13 +622,13 @@ const Sales = () => {
               <strong>Categories:</strong> {selectedProduct.categories}
             </p>
             <p>
-              <strong>Available Stocks:</strong> {selectedProduct.qnt}
+              <strong>Available Stocks:</strong> {selectedProduct.availableStocks}
             </p>
             <p>
-              <strong>Quantity:</strong> {selectedProduct.rprice}
+              <strong>Quantity:</strong> {selectedProduct.qnt}
             </p>
             <p>
-              <strong>Price:</strong> {selectedProduct.sprice}
+              <strong>Price:</strong> {selectedProduct.price}
             </p>
            
             <button
@@ -644,4 +644,4 @@ const Sales = () => {
   );
 };
 
-export default Sales;
+export default Stocks;
