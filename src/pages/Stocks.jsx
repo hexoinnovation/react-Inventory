@@ -5,7 +5,7 @@ import { IoBagAdd } from "react-icons/io5";
 import { BsFiletypePdf } from "react-icons/bs";
 
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { MdOutlineAddCircle } from "react-icons/md";
+
 import {
   doc,
   setDoc,
@@ -36,21 +36,13 @@ const Stocks = () => {
     price: "",
   });
 
-  const [filteredCategory, setFilteredCategory] = useState(""); // Filter by category
 
   // Get the current logged-in user
   const [user] = useAuthState(auth); // Returns current authenticated user
 
   
-  // Handle category filter change
-  const handleCategoryFilterChange = (e) => {
-    setFilteredCategory(e.target.value);
-  };
 
-  // Filtered products based on the selected category
-  const filteredProducts = filteredCategory
-    ? products.filter((product) => product.category === filteredCategory)
-    : products;
+
 
 
   // Handle form field changes
@@ -123,10 +115,7 @@ const Stocks = () => {
       });
       await batch.commit();
 
-      // Remove from the local state (table) by filtering out the supplier's products
-      setProducts((prevProducts) =>
-        prevProducts.filter((product) => product.sname !== Suppliername)
-      );
+      
 
       alert(`All products for ${Suppliername} deleted successfully!`);
     } catch (error) {
@@ -156,15 +145,15 @@ const Stocks = () => {
 
       {/* Filter and Button Section */}
       <div className="flex justify-between mt-10 ">
+        <div></div>
         {/* Category Filter Dropdown */}
-        <div className="relative w-40">
+        {/* <div className="relative w-40">
           <label htmlFor="category-filter" className="sr-only">
             Filter by Category
           </label>
           <select
             id="category-filter"
-            value={filteredCategory}
-            onChange={handleCategoryFilterChange}
+            value=""
             className="block w-full p-2 text-sm text-black border border-gray-500 rounded-lg bg-gray-50"
           >
             <option value="">All Categories</option>
@@ -172,7 +161,7 @@ const Stocks = () => {
             <option value="Smartphone">Smartphone</option>
             <option value="Tablet">Tablet</option>
           </select>
-        </div>
+        </div> */}
 
         {/* Create Purchase Order and Download Button */}
         <div className="flex x-small:flex-col medium:flex-row gap-2 x-small:ml-10 ">
@@ -224,7 +213,7 @@ const Stocks = () => {
             </tr>
           </thead>
           <tbody className="bg-gray-200 text-black">
-            {filteredProducts.map((product) => (
+            {products.map((product) => (
               <tr key={product.id} className="border-b hover:bg-gray-50">
                 <td className="px-6 py-4 font-medium">{product.no}</td>
                 <td className="px-6 py-4 font-medium">{product.product}</td>

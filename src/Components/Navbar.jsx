@@ -54,8 +54,7 @@ const Navbar = ({ handleMenuClick }) => {
       
         
         </div>
-        <input type="checkbox" id="switch-mode" hidden />
-        <label htmlFor="switch-mode" className="switch-mode"></label>
+     
 
         <a href="#" className="profile">
           <img src="img/people.png" alt="Profile" />

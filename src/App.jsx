@@ -2,14 +2,8 @@ import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Sidebar from './Components/Sidebar';
 import Navbar from './Components/Navbar';
-import Inventory from './pages/Stocks';
 import Purchase from './pages/Purchase';
-import Report from './pages/Report';
 import Sales from './pages/Sales';
-import Settings from './pages/Settings';
-import Account from './pages/Account';
-import Dashboard from './pages/Dashboard';
-
 import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from './config/firebase';
 import { FaUser, FaLock, FaSignInAlt } from 'react-icons/fa';
 import { db } from './config/firebase'; // Import Firestore database
@@ -18,6 +12,9 @@ import Stocks from './pages/Stocks';
 import Attendence from './pages/Report';
 import Shop from './pages/Account';
 import Order from './pages/Settings';
+import Dashboard from './pages/Dashboard';
+import Invoice from './pages/invoice';
+
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -83,10 +80,10 @@ const App = () => {
         <div id="content" className={isAuthenticated ? "" : "blur-sm"}>
           {isAuthenticated && <Navbar handleMenuClick={handleMenuClick} />}
           <Routes>
-            <Route path="/" element={!isAuthenticated ? "" : <Dashboard />} />
+            <Route path="/" element={!isAuthenticated ? "" : <Dashboard/>} />
             <Route path="/dashboard" element={isAuthenticated ? <Dashboard handleLogout={handleLogout} /> : <Navigate to="/" />} />
             <Route path="/purchase" element={isAuthenticated ? <Purchase /> : <Navigate to="/" />} />
-           
+            <Route path="/invoice" element={isAuthenticated ? <Invoice /> : <Navigate to="/" />} />
             <Route path="/stocks" element={isAuthenticated ? <Stocks /> : <Navigate to="/" />} />
             <Route path="/sales" element={isAuthenticated ? <Sales /> : <Navigate to="/" />} />
             <Route path="/shop" element={isAuthenticated ? <Shop /> : <Navigate to="/" />} />

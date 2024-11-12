@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import TodoList from '../Components/Todolist';
 
-const Dashboard = ({ handleLogout }) => {
+const Dashboard= ({ handleLogout }) => {
   return (
     <main>
       <div className="head-title">

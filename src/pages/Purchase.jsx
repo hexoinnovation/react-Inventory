@@ -38,7 +38,7 @@ const Purchase = () => {
     price: "",
   });
 
-  const [filteredCategory, setFilteredCategory] = useState(""); // Filter by category
+
 
   // Get the current logged-in user
   const [user] = useAuthState(auth); // Returns current authenticated user
@@ -159,7 +159,7 @@ const Purchase = () => {
      
 
       {/* Filter and Button Section */}
-      <div className="flex justify-between mt-10 ">
+      <div className="flex flex-justify-between mt-10 ">
         {/* Category Filter Dropdown */}
         <div className="relative w-40">
           <label htmlFor="category-filter" className="sr-only">

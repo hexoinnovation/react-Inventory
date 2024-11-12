@@ -67,7 +67,7 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
         </li>
 
         <div className="label">
-          <li className="medium:ml-20 x-small:ml-10 mb-1">
+          <li className="medium:ml-16 x-small:ml-8 mb-1">
           <i className="bx bxs-store"></i>
 
             <span className="ml-2 font-extrabold font-label">ECOMMERCE</span>
@@ -82,7 +82,7 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
           </Link>
         </li>
 
-        <li className={activeLink === "Order" ? "active" : ""}>
+        <li className={activeLink === "order" ? "active" : ""}>
           <Link to="/order" onClick={() => handleLinkClick("order")}>
           <i className="bx bxs-cart-add"></i>
 
@@ -91,7 +91,7 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
         </li>
 
         <div className="label">
-          <li className="medium:ml-20 x-small:ml-10 mb-1 ">
+          <li className="medium:ml-16 x-small:ml-8 mb-1 ">
           <i className="bx bxs-user-detail"></i>
 
             <span className="ml-2 font-extrabold font-label">HRM</span>
