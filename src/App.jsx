@@ -13,7 +13,7 @@ import Attendence from './pages/Report';
 import Shop from './pages/Account';
 import Order from './pages/Settings';
 import Dashboard from './pages/Dashboard';
-import Invoice from './pages/invoice';
+import Invoice from './pages/Invoice';
 
 
 const App = () => {

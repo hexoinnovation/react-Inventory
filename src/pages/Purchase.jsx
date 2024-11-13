@@ -15,6 +15,7 @@ import {
   getDocs,
   writeBatch,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { auth } from "../config/firebase"; // Make sure you have firebase authentication set up
@@ -26,6 +27,7 @@ const Purchase = () => {
   const [editPopup, setEditPopup] = useState(false);
   const [viewPopup,setViewPopup] = useState(false);
   const [products, setProducts] = useState([]);
+ 
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [newProduct, setNewProduct] = useState({
     sname: "",
@@ -51,7 +53,7 @@ const Purchase = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-  
+   
     if (!user) {
       alert("Please log in to add a product.");
       return;
@@ -74,7 +76,7 @@ const Purchase = () => {
     } catch (error) {
       console.error("Error adding product to Firestore: ", error);
     }
-  
+
     setShowModal(false);
     setNewProduct({
       sname: "",
@@ -108,6 +110,40 @@ const Purchase = () => {
   
     fetchProducts();
   }, [user]); 
+
+
+  const updateProduct = async (updatedProduct) => {
+    if (!user) {
+      alert("Please log in to update a product.");
+      return;
+    }
+  
+    try {
+      const userEmail = user.email; // Get the email of the logged-in user
+  
+      // Reference the user's document in the 'admins' collection and the 'Purchase' subcollection
+      const userDocRef = doc(db, "admins", userEmail);
+      const productDocRef = doc(userDocRef, "Purchase", updatedProduct.sname); // Reference to the product document by 'sname'
+  
+      // Update the product document in Firestore
+      await setDoc(productDocRef, updatedProduct, { merge: true });
+  
+      alert("Product updated successfully!");
+  
+      // Update the product in local state
+      setProducts((prev) =>
+        prev.map((product) =>
+          product.sname === updatedProduct.sname ? updatedProduct : product
+        )
+      );
+    } catch (error) {
+      console.error("Error updating product in Firestore: ", error);
+      alert("There was an error updating the product. Please try again.");
+    }
+  
+    setEditPopup(false); // Close the edit modal after updating
+  };
+
   const handleRemoveProduct = async (sname) => {
     try {
       // Get the logged-in user's email
@@ -144,7 +180,25 @@ const Purchase = () => {
     }
   };
 
+  
 
+  const handlePrint = () => {
+    const content = document.getElementById('productTable'); // Get the table element by its ID
+    const printWindow = window.open('', '', 'height=500, width=800'); // Open a new window for printing
+  
+    printWindow.document.write('<html><head><title>Print</title>'); // Set the document's title
+    printWindow.document.write('<style>'); // Add custom styles for the print window
+    printWindow.document.write('table { width: 100%; border-collapse: collapse; }');
+    printWindow.document.write('td, th { padding: 10px; border: 1px solid #ddd; text-align: left; }');
+    printWindow.document.write('th { background-color: #f0f0f0; }'); // Optional: Add background for headers
+    printWindow.document.write('</style></head><body>');
+    
+    printWindow.document.write(content.outerHTML); // Add the table content to the print window
+    printWindow.document.write('</body></html>');
+    
+    printWindow.document.close(); // Close the document for printing
+    printWindow.print(); // Open the print dialog
+  };
 
   return (
     <div className="container mx-auto p-4 mt-10">
@@ -168,11 +222,14 @@ const Purchase = () => {
               </span>
               <span className="text-base font-bold">Create</span>
             </div>
-          </button>
-          <button className="px-1 py-1 text-white font-bold bg-blue-500 rounded-full hover:bg-blue-600 w-24">
-          <BsFiletypePdf className="w-5 h-6 inline mr-1" />
-          <span>Print</span>
-        </button>
+            </button>
+            <button
+        className="px-1 py-1 text-white font-bold bg-blue-500 rounded-full hover:bg-blue-600 w-24"
+        onClick={handlePrint}
+      >
+        <BsFiletypePdf className="w-5 h-6 inline mr-1" />
+        <span>Print</span>
+      </button> {/* Ensure this closing tag is present */}
 
           
         </div>
@@ -180,7 +237,7 @@ const Purchase = () => {
 
       {/* Table */}
       <div className="overflow-x-auto shadow-md sm:rounded-lg mt-10">
-  <table className="w-full text-sm text-left text-white">
+  <table id="productTable" className="w-full text-sm text-left text-white">
     <thead className="text-xs text-black uppercase bg-blue-200">
       <tr>
         <th scope="col" className="px-6 py-3">Supplier Name</th>
@@ -218,14 +275,14 @@ const Purchase = () => {
 
         {/* Edit Icon */}
         <button
-          className="text-green-600 hover:underline ml-1"
-          onClick={() => {
-            setEditPopup(true);
-            setSelectedProduct(product);
-          }}
-        >
-          <FaEdit className="text-green-600 text-xl ml-1" />
-        </button>
+  className="text-green-600 hover:underline ml-1"
+  onClick={() => {
+    setEditPopup(true); // Open the edit popup modal
+    setNewProduct(product); // Populate newProduct with the details of the selected product
+  }}
+>
+  <FaEdit className="text-green-600 text-xl ml-1" />
+</button>
 
         {/* Delete Icon */}
         <button
@@ -406,7 +463,7 @@ const Purchase = () => {
   <div className="fixed inset-0 flex  items-center justify-center bg-gray-800 bg-opacity-50 z-50  ">
     <div className="bg-blue-200 rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-lg large:max-w-lg extra-large:max-w-lg xx-large:max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
       <h2 className="text-2xl font-serif text-teal-600 mb-4">
-         Edit Order
+         Edit Purchase Order
       </h2>
       <form onSubmit={handleFormSubmit}>
         {/* Supplier Name Input */}
@@ -550,7 +607,7 @@ const Purchase = () => {
             type="submit"
             className="px-4 py-2 text-white bg-teal-500 rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
-            Save
+            Update
           </button>
         </div>
       </form>
