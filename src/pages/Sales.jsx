@@ -24,7 +24,7 @@ const Sales = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const[editPopup,setEditPopup]=useState(false);
-  const [viewPopup, setViewPopup] = useState(false);
+
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [newProduct, setNewProduct] = useState({
@@ -262,7 +262,7 @@ const Sales = () => {
         <div className="fixed inset-0 flex  items-center justify-center bg-gray-800 bg-opacity-50 z-50  ">
           <div className="bg-blue-200 rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-lg large:max-w-lg extra-large:max-w-lg xx-large:max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
             <h2 className="text-2xl font-serif text-teal-600 mb-4">
-              Create Purchase Order
+              Create Sales List
             </h2>
             <form onSubmit={handleFormSubmit}>
               {/* Supplier Name Input */}
@@ -420,7 +420,7 @@ const Sales = () => {
   <div className="fixed inset-0 flex  items-center justify-center bg-gray-800 bg-opacity-50 z-50  ">
     <div className="bg-blue-200 rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-lg large:max-w-lg extra-large:max-w-lg xx-large:max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
       <h2 className="text-2xl font-serif text-teal-600 mb-4">
-         Edit Order
+         Edit Sales Order
       </h2>
       <form onSubmit={handleFormSubmit}>
         {/* Supplier Name Input */}
@@ -571,28 +571,7 @@ const Sales = () => {
     </div>
   </div>
 )}
-      {viewPopup && selectedProduct && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-4 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-xs large:max-w-sm">
-            <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
-            <p>
-              <strong>Supplier Name:</strong> {selectedProduct.sname}
-            </p>
-            <p>
-              <strong>Phone Number:</strong> {selectedProduct.phone}
-            </p>
-            <p>
-              <strong>Address:</strong> {selectedProduct.add}
-            </p>
-            <button
-              className="mt-4 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
-              onClick={() => setShowPopup(false)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+     
 
       {/* /* Popup for Viewing Product */}
       {showPopup && selectedProduct && (
