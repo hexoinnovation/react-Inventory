@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Import Link from React Router
-import { toast } from 'react-toastify'; // Import if using react-toastify
+
 
 
 const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
@@ -120,13 +120,7 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
           </Link>
         </li>
         
-        <li className={activeLink === "Attendence" ? "active" : ""}>
-          <Link to="/attendence" onClick={() => handleLinkClick("Attendence")}>
-          <i className="bx bxs-check-circle"></i>
-
-            <span className="text">Attendence</span>
-          </Link>
-        </li>
+       
        
 
         <li className={activeLink === "Attendence" ? "active" : ""}>
