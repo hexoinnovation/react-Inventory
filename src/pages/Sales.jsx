@@ -193,9 +193,14 @@ const Sales = () => {
                 Quantity
               </th>
               <th scope="col" className="px-6 py-3">
+<<<<<<< HEAD
                 RPrice
               </th>
 
+=======
+              RPrice
+              </th>
+>>>>>>> 6fe227ac62573ce64e69134506899794325fe3c9
               <th scope="col" className="px-6 py-3">
                 SPrice
               </th>
