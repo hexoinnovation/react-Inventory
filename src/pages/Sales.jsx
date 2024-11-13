@@ -23,7 +23,7 @@ import { useAuthState } from "react-firebase-hooks/auth"; // To get current user
 const Sales = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const[editPopup,setEditPopup]=useState(false);
+  const [editPopup, setEditPopup] = useState(false);
 
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -36,14 +36,8 @@ const Sales = () => {
     price: "",
   });
 
-  
-
   // Get the current logged-in user
   const [user] = useAuthState(auth); // Returns current authenticated user
-
-  
- 
-
 
   // Handle form field changes
   const handleInputChange = (e) => {
@@ -139,9 +133,8 @@ const Sales = () => {
 
   return (
     <div className="container mx-auto p-4 mt-10">
-      <h1 className="text-4xl font-bold text-gray-600">Sales</h1>
+      <h1 className="text-4xl font-bold text-gray-700">Sales</h1>
 
-    
       <div className="flex justify-between mt-10 ">
         <div></div>
         {/* Category Filter Dropdown */}
@@ -159,7 +152,7 @@ const Sales = () => {
             <option value="Smartphone">Smartphone</option>
             <option value="Tablet">Tablet</option>
           </select>
-        </div> */} 
+        </div> */}
 
         {/* Create Purchase Order and Download Button */}
         <div className="flex x-small:flex-col medium:flex-row gap-2 x-small:ml-10 ">
@@ -187,7 +180,7 @@ const Sales = () => {
           <thead className="text-xs text-black uppercase bg-blue-200">
             <tr>
               <th scope="col" className="px-6 py-3">
-              Serial No
+                Serial No
               </th>
               <th scope="col" className="px-6 py-3">
                 Product Name
@@ -195,16 +188,16 @@ const Sales = () => {
               <th scope="col" className="px-6 py-3">
                 Categories
               </th>
-           
+
               <th scope="col" className="px-6 py-3">
                 Quantity
               </th>
               <th scope="col" className="px-6 py-3">
-         RPrice
+                RPrice
               </th>
-             
+
               <th scope="col" className="px-6 py-3">
-               SPrice
+                SPrice
               </th>
               <th scope="col" className="px-6 py-3">
                 Action
@@ -219,7 +212,7 @@ const Sales = () => {
                 <td className="px-6 py-4">{product.categories}</td>
                 <td className="px-6 py-4">{product.qnt}</td>
                 <td className="px-6 py-4">{product.rprice}</td>
-<td className="px-6 py-4">{product.sprice}</td>
+                <td className="px-6 py-4">{product.sprice}</td>
 
                 <td className="px-6 py-4">
                   <button
@@ -351,9 +344,6 @@ const Sales = () => {
 
               {/* Product Name Input */}
               <div className=" flex x-small:flex-col medium:flex-row w-full">
-             
-             
-
                 {/* Categories Input */}
                 <div className="mb-4   medium:w-3/4">
                   <label
@@ -393,8 +383,6 @@ const Sales = () => {
                 </div>
               </div>
 
-             
-
               <div className="flex justify-end gap-2 mt-4">
                 <button
                   type="button"
@@ -415,163 +403,200 @@ const Sales = () => {
         </div>
       )}
 
+      {editPopup && (
+        <div className="fixed inset-0 flex  items-center justify-center bg-gray-800 bg-opacity-50 z-50  ">
+          <div className="bg-blue-200 rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-lg large:max-w-lg extra-large:max-w-lg xx-large:max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
+            <h2 className="text-2xl font-serif text-teal-600 mb-4">
+              Edit Sales Order
+            </h2>
+            <form onSubmit={handleFormSubmit}>
+              {/* Supplier Name Input */}
+              <div className=" flex x-small:flex-col medium:flex-row w-full">
+                <div className="mb-4 medium:w-3/4">
+                  <label
+                    htmlFor="sname"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Supplier Name
+                  </label>
+                  <input
+                    type="text"
+                    name="sname"
+                    id="sname"
+                    placeholder="Enter Supplier Name"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.sname}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
 
-{editPopup && (
-  <div className="fixed inset-0 flex  items-center justify-center bg-gray-800 bg-opacity-50 z-50  ">
-    <div className="bg-blue-200 rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-lg large:max-w-lg extra-large:max-w-lg xx-large:max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
-      <h2 className="text-2xl font-serif text-teal-600 mb-4">
-         Edit Sales Order
-      </h2>
-      <form onSubmit={handleFormSubmit}>
-        {/* Supplier Name Input */}
-        <div className=" flex x-small:flex-col medium:flex-row w-full">
+                {/* Phone Input */}
+                <div className="mb-4 medium:ml-5 medium:w-3/4">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Phone Number
+                  </label>
+                  <input
+                    type="text"
+                    name="phone"
+                    id="phone"
+                    placeholder="Enter Phone Number"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.phone}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
 
-        <div className="mb-4 medium:w-3/4">
-          <label htmlFor="sname" className="block text-sm font-medium text-gray-700 mb-1">Supplier Name</label>
-          <input
-            type="text"
-            name="sname"
-            id="sname"
-            placeholder="Enter Supplier Name"
-            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-            value={newProduct.sname}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+              {/* Address Input */}
+              <div className=" flex x-small:flex-col medium:flex-row w-full">
+                <div className="mb-4  medium:w-3/4">
+                  <label
+                    htmlFor="add"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    name="add"
+                    id="add"
+                    placeholder="Enter Address"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.add}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
 
-        {/* Phone Input */}
-        <div className="mb-4 medium:ml-5 medium:w-3/4">
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-          <input
-            type="text"
-            name="phone"
-            id="phone"
-            placeholder="Enter Phone Number"
-            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-            value={newProduct.phone}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        </div>
+                {/* ID Input */}
+                <div className="mb-4  medium:ml-5  medium:w-3/4">
+                  <label
+                    htmlFor="id"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    ID
+                  </label>
+                  <input
+                    type="text"
+                    name="id"
+                    id="id"
+                    placeholder="Enter ID"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.id}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
 
-        {/* Address Input */}
-        <div className=" flex x-small:flex-col medium:flex-row w-full">
-        <div className="mb-4  medium:w-3/4">
-          <label htmlFor="add" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-          <input
-            type="text"
-            name="add"
-            id="add"
-            placeholder="Enter Address"
-            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-            value={newProduct.add}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+              {/* Product Name Input */}
+              <div className=" flex x-small:flex-col medium:flex-row w-full">
+                <div className="mb-4  medium:w-3/4">
+                  <label
+                    htmlFor="pname"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Product Name
+                  </label>
+                  <input
+                    type="text"
+                    name="pname"
+                    id="pname"
+                    placeholder="Enter Product Name"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.pname}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
 
-        {/* ID Input */}
-        <div className="mb-4  medium:ml-5  medium:w-3/4">
-          <label htmlFor="id" className="block text-sm font-medium text-gray-700 mb-1">ID</label>
-          <input
-            type="text"
-            name="id"
-            id="id"
-            placeholder="Enter ID"
-            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-            value={newProduct.id}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        </div>
+                {/* Categories Input */}
+                <div className="mb-4  medium:ml-5  medium:w-3/4">
+                  <label
+                    htmlFor="qnt"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Quantity
+                  </label>
+                  <input
+                    type="number"
+                    name="qnt"
+                    id="qnt"
+                    placeholder="Enter Quantity"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.qnt}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
 
-        {/* Product Name Input */}
-        <div className=" flex x-small:flex-col medium:flex-row w-full">
-        <div className="mb-4  medium:w-3/4">
-          <label htmlFor="pname" className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-          <input
-            type="text"
-            name="pname"
-            id="pname"
-            placeholder="Enter Product Name"
-            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-            value={newProduct.pname}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+              {/* Quantity Input */}
+              <div className=" flex x-small:flex-col medium:flex-row w-full">
+                <div className="mb-4   medium:w-3/4">
+                  <label
+                    htmlFor="categories"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Categories
+                  </label>
+                  <input
+                    type="text"
+                    name="categories"
+                    id="categories"
+                    placeholder="Enter Categories"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.categories}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
 
-        {/* Categories Input */}
-        <div className="mb-4  medium:ml-5  medium:w-3/4">
-          <label htmlFor="qnt" className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-          <input
-            type="number"
-            name="qnt"
-            id="qnt"
-            placeholder="Enter Quantity"
-            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-            value={newProduct.qnt}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        </div>
+                {/* Price Input */}
+                <div className="mb-4  medium:ml-5  medium:w-3/4">
+                  <label
+                    htmlFor="price"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Price
+                  </label>
+                  <input
+                    type="number"
+                    name="price"
+                    id="price"
+                    placeholder="Enter Price"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.price}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
 
-        {/* Quantity Input */}
-        <div className=" flex x-small:flex-col medium:flex-row w-full">
-        <div className="mb-4   medium:w-3/4">
-          <label htmlFor="categories" className="block text-sm font-medium text-gray-700 mb-1">Categories</label>
-          <input
-            type="text"
-            name="categories"
-            id="categories"
-            placeholder="Enter Categories"
-            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-            value={newProduct.categories}
-            onChange={handleInputChange}
-            required
-          />
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  type="button"
+                  className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none"
+                  onClick={() => setEditPopup(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-white bg-teal-500 rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-
-        {/* Price Input */}
-        <div className="mb-4  medium:ml-5  medium:w-3/4">
-          <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">Price</label>
-          <input
-            type="number"
-            name="price"
-            id="price"
-            placeholder="Enter Price"
-            className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-            value={newProduct.price}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        </div>
-
-        <div className="flex justify-end gap-2 mt-4">
-          <button
-            type="button"
-            className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none"
-            onClick={() => setEditPopup(false)}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 text-white bg-teal-500 rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
-          >
-            Save
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-)}
-     
+      )}
 
       {/* /* Popup for Viewing Product */}
       {showPopup && selectedProduct && (
@@ -596,7 +621,7 @@ const Sales = () => {
             <p>
               <strong>Price:</strong> {selectedProduct.sprice}
             </p>
-           
+
             <button
               className="mt-4 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
               onClick={() => setShowPopup(false)}

@@ -9,11 +9,12 @@ import { FaUser, FaLock, FaSignInAlt } from 'react-icons/fa';
 import { db } from './config/firebase'; // Import Firestore database
 import { doc, setDoc } from 'firebase/firestore'; // Firestore functions for adding data
 import Stocks from './pages/Stocks';
-import Attendence from './pages/Report';
+import Attendence from './pages/Attendence';
 import Shop from './pages/Account';
 import Order from './pages/Settings';
 import Dashboard from './pages/Dashboard';
-import Invoice from './pages/Invoice';
+import EmployeeDetails from './pages/EmployeeDetails';
+import Invoice from './pages/invoice';
 
 
 const App = () => {
@@ -83,11 +84,12 @@ const App = () => {
             <Route path="/" element={!isAuthenticated ? "" : <Dashboard/>} />
             <Route path="/dashboard" element={isAuthenticated ? <Dashboard handleLogout={handleLogout} /> : <Navigate to="/" />} />
             <Route path="/purchase" element={isAuthenticated ? <Purchase /> : <Navigate to="/" />} />
-            <Route path="/invoice" element={isAuthenticated ? <Invoice /> : <Navigate to="/" />} />
+            <Route path="/invoice" element={isAuthenticated ? <Invoice/>: <Navigate to="/" />} />
             <Route path="/stocks" element={isAuthenticated ? <Stocks /> : <Navigate to="/" />} />
             <Route path="/sales" element={isAuthenticated ? <Sales /> : <Navigate to="/" />} />
             <Route path="/shop" element={isAuthenticated ? <Shop /> : <Navigate to="/" />} />
             <Route path="/order" element={isAuthenticated ? <Order /> : <Navigate to="/" />} />
+            <Route path="/employee" element={isAuthenticated ? <EmployeeDetails /> : <Navigate to="/" />} />
             <Route path="/attendence" element={isAuthenticated ? <Attendence /> : <Navigate to="/" />} />
             
           </Routes>

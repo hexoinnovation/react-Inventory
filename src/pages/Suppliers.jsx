@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
-import { AiOutlineDownload, AiOutlineEye } from 'react-icons/ai';
+import React, { useState } from "react";
+import { FaSearch } from "react-icons/fa";
+import { AiOutlineDownload, AiOutlineEye } from "react-icons/ai";
 import { MdOutlineAddCircle } from "react-icons/md";
-import { doc, setDoc, collection, deleteDoc, getDocs } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  collection,
+  deleteDoc,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../config/firebase";
-import { auth } from '../config/firebase'; // Make sure you have firebase authentication set up
-import { useAuthState } from 'react-firebase-hooks/auth'; // To get current user
-import { jsPDF } from 'jspdf';
-import * as XLSX from 'xlsx';
-
+import { auth } from "../config/firebase"; // Make sure you have firebase authentication set up
+import { useAuthState } from "react-firebase-hooks/auth"; // To get current user
+import { jsPDF } from "jspdf";
+import * as XLSX from "xlsx";
 
 const Suppliers = () => {
   const [showModal, setShowModal] = useState(false);
@@ -16,14 +21,12 @@ const Suppliers = () => {
   const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
   const [newContact, setNewContact] = useState({
-    name: '',
-    phone: '',
-    address: '',
+    name: "",
+    phone: "",
+    address: "",
   });
-  const [user] = useAuthState(auth); 
+  const [user] = useAuthState(auth);
 
-
-  
   // Handle form field changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,7 +38,7 @@ const Suppliers = () => {
     e.preventDefault();
     setContacts((prev) => [...prev, { ...newContact, id: prev.length + 1 }]);
     setShowModal(false);
-    setNewContact({ name: '', phone: '', address: '' });
+    setNewContact({ name: "", phone: "", address: "" });
   };
 
   // Handle removing contact from the list
@@ -50,7 +53,9 @@ const Suppliers = () => {
       <div className="flex justify-between mb-4">
         {/* Search Bar */}
         <div className="relative w-1/3 flex items-center">
-          <label htmlFor="table-search" className="sr-only">Search</label>
+          <label htmlFor="table-search" className="sr-only">
+            Search
+          </label>
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <FaSearch className="w-4 h-4 text-gray-600" />
           </div>
@@ -68,13 +73,12 @@ const Suppliers = () => {
             className="px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
             onClick={() => setShowModal(true)}
           >
-            <div className='flex gap-1'>
-            <span className=' text-2xl '><MdOutlineAddCircle />
-            </span>
-            <span className="text-base">Create</span>
-
+            <div className="flex gap-1">
+              <span className=" text-2xl ">
+                <MdOutlineAddCircle />
+              </span>
+              <span className="text-base">Create</span>
             </div>
-            
           </button>
           <button className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
             <AiOutlineDownload className="w-5 h-5 inline mr-2" /> SVG
@@ -87,11 +91,21 @@ const Suppliers = () => {
         <table className="w-full text-sm text-left text-white">
           <thead className="text-xs text-black uppercase bg-gray-300">
             <tr>
-              <th scope="col" className="px-6 py-3">ID</th>
-              <th scope="col" className="px-6 py-3">Name</th>
-              <th scope="col" className="px-6 py-3">Phone</th>
-              <th scope="col" className="px-6 py-3">Address</th>
-              <th scope="col" className="px-6 py-3">Action</th>
+              <th scope="col" className="px-6 py-3">
+                ID
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Name
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Phone
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Address
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody className="bg-gray-200 text-black">
@@ -104,7 +118,10 @@ const Suppliers = () => {
                 <td className="px-6 py-4">
                   <button
                     className="text-blue-600 hover:underline mr-2"
-                    onClick={() => { setShowPopup(true); setSelectedContact(contact); }}
+                    onClick={() => {
+                      setShowPopup(true);
+                      setSelectedContact(contact);
+                    }}
                   >
                     <AiOutlineEye className="inline mr-1" /> View
                   </button>
@@ -117,8 +134,8 @@ const Suppliers = () => {
 
       {/* Modal for Adding Contact */}
       {showModal && (
-         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 ">
-    <div className="bg-white rounded-lg p-6 w-full max-w-xs x-small:ml-12  sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 ">
+          <div className="bg-white rounded-lg p-6 w-full max-w-xs x-small:ml-12  sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl">
             <h2 className="text-2xl font-semibold mb-4"> Create Suppliers</h2>
             <form onSubmit={handleFormSubmit}>
               <input
@@ -156,7 +173,10 @@ const Suppliers = () => {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
                   Submit
                 </button>
               </div>
@@ -168,12 +188,20 @@ const Suppliers = () => {
       {/* Popup for Viewing Contact Details */}
       {showPopup && selectedContact && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 ">
-    <div className="bg-white rounded-lg p-6 w-full max-w-xs x-small:ml-12  sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl">
+          <div className="bg-white rounded-lg p-6 w-full max-w-xs x-small:ml-12  sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl">
             <h2 className="text-2xl font-semibold mb-4">Contact Details</h2>
-            <p><strong>ID:</strong> {selectedContact.id}</p>
-            <p><strong>Name:</strong> {selectedContact.name}</p>
-            <p><strong>Phone:</strong> {selectedContact.phone}</p>
-            <p><strong>Address:</strong> {selectedContact.address}</p>
+            <p>
+              <strong>ID:</strong> {selectedContact.id}
+            </p>
+            <p>
+              <strong>Name:</strong> {selectedContact.name}
+            </p>
+            <p>
+              <strong>Phone:</strong> {selectedContact.phone}
+            </p>
+            <p>
+              <strong>Address:</strong> {selectedContact.address}
+            </p>
             <div className="flex justify-end mt-4 gap-2">
               <button
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"

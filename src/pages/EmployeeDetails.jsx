@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineEye } from "react-icons/ai";
 import { IoBagAdd } from "react-icons/io5";
 import { BsFiletypePdf } from "react-icons/bs";
-
+import { IoPersonAdd } from "react-icons/io5";
 import { RiDeleteBin5Line } from "react-icons/ri";
-
+import { MdOutlineAddCircle } from "react-icons/md";
 import {
   doc,
   setDoc,
@@ -20,20 +20,19 @@ import { db } from "../config/firebase";
 import { auth } from "../config/firebase"; // Make sure you have firebase authentication set up
 import { useAuthState } from "react-firebase-hooks/auth"; // To get current user
 
-const Stocks = () => {
+const EmployeeDetails = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [editPopup, setEditPopup] = useState(false);
-  const [viewPopup, setViewPopup] = useState(false);
+
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [newProduct, setNewProduct] = useState({
-    no: "",
-    product: "",
-    categories: "",
-    availableStocks: "",
-    qnt: "",
-    price: "",
+    id: "",
+    employee: "",
+    address: "",
+    phone: "",
+    order: "",
   });
 
   // Get the current logged-in user
@@ -63,10 +62,10 @@ const Stocks = () => {
 
       // Create a document reference for the user in Firestore
       const userDocRef = doc(db, "admins", userEmail); // Reference to the 'admins' collection using the user's email
-      const productRef = collection(userDocRef, "Stocks"); // Reference to the 'products' subcollection
+      const productRef = collection(userDocRef, "products"); // Reference to the 'products' subcollection
 
       // Set the product document
-      await setDoc(doc(productRef, newProduct.no), newProduct);
+      await setDoc(doc(productRef, newProduct.sname), newProduct);
 
       alert("Product added successfully!");
     } catch (error) {
@@ -75,58 +74,45 @@ const Stocks = () => {
 
     setShowModal(false);
     setNewProduct({
-      no: "",
-      product: "",
-      categories: "",
-      availableStocks: "",
-      qnt: "",
-      price: "",
+      id: "",
+      employee: "",
+      address: "",
+      phone: "",
+      order: "",
     });
   };
 
-  const handleRemoveProduct = async (no) => {
+  // Handle removing all products for a supplier
+  const handleRemoveProduct = async (Suppliername) => {
     try {
-      // Get the logged-in user's email
-      const userEmail = user.email;
-
-      // Reference to the user's products collection in Firestore
-      const userDocRef = doc(db, "admins", userEmail);
-      const productRef = doc(userDocRef, "Stocks", no); // Reference to the product document
-
-      // Delete the product from Firestore
-      await deleteDoc(productRef);
-
-      // Remove the product from the local state without needing to refetch
-      setProducts((prevProducts) =>
-        prevProducts.filter((product) => product.no !== no)
+      // Reference to the user's product collection
+      const userCollectionRef = collection(
+        db,
+        "admins",
+        user.email,
+        "products"
       );
 
-      alert("Product deleted successfully!");
+      // Get all products for this supplier
+      const supplierQuery = query(
+        userCollectionRef,
+        where("sname", "==", Suppliername)
+      );
+      const querySnapshot = await getDocs(supplierQuery);
+
+      // Delete each product document that matches the supplier name
+      const batch = writeBatch(db);
+      querySnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      await batch.commit();
+
+      alert(`All products for ${Suppliername} deleted successfully!`);
     } catch (error) {
-      console.error("Error deleting product: ", error);
+      console.error("Error deleting products for supplier: ", error);
+      alert("Error deleting products for supplier. Please try again.");
     }
   };
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      if (!user) return; // If no user is logged in, skip fetching
-
-      try {
-        const userEmail = user.email; // Get the logged-in user's email
-        const userDocRef = doc(db, "admins", userEmail); // Reference to the 'admins' collection
-        const productsRef = collection(userDocRef, "Stocks"); // Reference to the 'Purchase' subcollection
-
-        const productSnapshot = await getDocs(productsRef); // Fetch the products from the 'Purchase' subcollection
-        const productList = productSnapshot.docs.map((doc) => doc.data()); // Map the documents to an array of data
-
-        setProducts(productList); // Set the products in state
-      } catch (error) {
-        console.error("Error fetching products: ", error);
-      }
-    };
-
-    fetchProducts();
-  }, [user]);
 
   // Function to handle product creation
   const handleCreateProduct = async () => {
@@ -143,33 +129,10 @@ const Stocks = () => {
     }
   };
 
-  const handlePrint = () => {
-    const content = document.getElementById("productTable"); // Get the table element by its ID
-    const printWindow = window.open("", "", "height=500, width=800"); // Open a new window for printing
-
-    printWindow.document.write("<html><head><title>Print</title>"); // Set the document's title
-    printWindow.document.write("<style>"); // Add custom styles for the print window
-    printWindow.document.write(
-      "table { width: 100%; border-collapse: collapse; }"
-    );
-    printWindow.document.write(
-      "td, th { padding: 10px; border: 1px solid #ddd; text-align: left; }"
-    );
-    printWindow.document.write("th { background-color: #f0f0f0; }"); // Optional: Add background for headers
-    printWindow.document.write("</style></head><body>");
-
-    printWindow.document.write(content.outerHTML); // Add the table content to the print window
-    printWindow.document.write("</body></html>");
-
-    printWindow.document.close(); // Close the document for printing
-    printWindow.print(); // Open the print dialog
-  };
-
   return (
     <div className="container mx-auto p-4 mt-10">
-      <h1 className="text-4xl font-bold text-gray-700">Stocks</h1>
+      <h1 className="text-4xl font-bold text-gray-600">Employees Details</h1>
 
-      {/* Filter and Button Section */}
       <div className="flex justify-between mt-10 ">
         <div></div>
         {/* Category Filter Dropdown */}
@@ -192,54 +155,41 @@ const Stocks = () => {
         {/* Create Purchase Order and Download Button */}
         <div className="flex x-small:flex-col medium:flex-row gap-2 x-small:ml-10 ">
           <button
-            className="px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
+            className="px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 mr-4"
             onClick={() => setShowModal(true)}
           >
-            <div className="flex gap-1">
-              <span className="text-2xl">
-                <IoBagAdd />
+            <div className="flex gap-1 ">
+              <span className="text-xl ">
+                <IoPersonAdd />
               </span>
-              <span className="text-base font-bold">Create</span>
+              <span className="text-base font-bold">ADD Employee</span>
             </div>
           </button>
-          <button
-            className="px-1 py-1 text-white font-bold bg-blue-500 rounded-full hover:bg-blue-600 w-24"
-            onClick={handlePrint}
-          >
-            <BsFiletypePdf className="w-5 h-6 inline mr-1" />
-            <span>Print</span>
-          </button>{" "}
-          {/* Ensure this closing tag is present */}
         </div>
       </div>
 
       {/* Table */}
       <div className="overflow-x-auto shadow-md sm:rounded-lg mt-10">
-        <table
-          id="productTable"
-          className="w-full text-sm text-left text-white"
-        >
+        <table className="w-full text-sm text-left text-white">
           <thead className="text-xs text-black uppercase bg-blue-200">
             <tr>
               <th scope="col" className="px-6 py-3">
-                Serial No
+                ID
               </th>
               <th scope="col" className="px-6 py-3">
-                Product Name
+                Employee Name
               </th>
               <th scope="col" className="px-6 py-3">
-                Categories
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Avaliable Stocks
+                Address
               </th>
 
               <th scope="col" className="px-6 py-3">
-                Quantity
+                Phone no
               </th>
               <th scope="col" className="px-6 py-3">
-                Price
+                Order
               </th>
+
               <th scope="col" className="px-6 py-3">
                 Action
               </th>
@@ -248,12 +198,11 @@ const Stocks = () => {
           <tbody className="bg-gray-200 text-black">
             {products.map((product) => (
               <tr key={product.id} className="border-b hover:bg-gray-50">
-                <td className="px-6 py-4 font-medium">{product.no}</td>
-                <td className="px-6 py-4 font-medium">{product.product}</td>
-                <td className="px-6 py-4">{product.categories}</td>
-                <td className="px-6 py-4">{product.availableStocks}</td>
-                <td className="px-6 py-4">{product.qnt}</td>
-                <td className="px-6 py-4">{product.price}</td>
+                <td className="px-6 py-4 font-medium">{product.id}</td>
+                <td className="px-6 py-4 font-medium">{product.employee}</td>
+                <td className="px-6 py-4">{product.address}</td>
+                <td className="px-6 py-4">{product.phone}</td>
+                <td className="px-6 py-4">{product.order}</td>
 
                 <td className="px-6 py-4">
                   <button
@@ -279,8 +228,8 @@ const Stocks = () => {
 
                   {/* Delete Icon */}
                   <button
-                    className="text-red-600 hover:underline ml-2"
-                    onClick={() => handleRemoveProduct(product.no)}
+                    className="text-red-600 hover:underline  ml-1"
+                    onClick={() => handleRemoveProduct(product.sname)}
                   >
                     <RiDeleteBin5Line className="text-red-600 text-xl" />
                   </button>
@@ -296,25 +245,25 @@ const Stocks = () => {
         <div className="fixed inset-0 flex  items-center justify-center bg-gray-800 bg-opacity-50 z-50  ">
           <div className="bg-blue-200 rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-lg large:max-w-lg extra-large:max-w-lg xx-large:max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
             <h2 className="text-2xl font-serif text-teal-600 mb-4">
-              Create Stock
+              Create Employee List
             </h2>
             <form onSubmit={handleFormSubmit}>
               {/* Supplier Name Input */}
               <div className=" flex x-small:flex-col medium:flex-row w-full">
                 <div className="mb-4 medium:w-3/4">
                   <label
-                    htmlFor="Seriel No"
+                    htmlFor="id"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Seriel No
+                    ID
                   </label>
                   <input
                     type="number"
-                    name="no"
-                    id="no"
-                    placeholder="Enter Seriel no"
+                    name="id"
+                    id="id"
+                    placeholder="Enter Employee ID"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.no}
+                    value={newProduct.id}
                     onChange={handleInputChange}
                     required
                   />
@@ -323,18 +272,18 @@ const Stocks = () => {
                 {/* Phone Input */}
                 <div className="mb-4 medium:ml-5 medium:w-3/4">
                   <label
-                    htmlFor="product"
+                    htmlFor="Employee Name"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Product
+                    Employee Name
                   </label>
                   <input
                     type="text"
-                    name="product"
-                    id="product"
-                    placeholder="Enter Product Name"
+                    name="employee"
+                    id="employee"
+                    placeholder="Enter Employee Name"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.product}
+                    value={newProduct.employee}
                     onChange={handleInputChange}
                     required
                   />
@@ -345,18 +294,18 @@ const Stocks = () => {
               <div className=" flex x-small:flex-col medium:flex-row w-full">
                 <div className="mb-4  medium:w-3/4">
                   <label
-                    htmlFor="categories"
+                    htmlFor="address"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Categories
+                    Address
                   </label>
                   <input
                     type="text"
-                    name="categories"
-                    id="categories"
-                    placeholder="Enter Categories"
+                    name="address"
+                    id="address"
+                    placeholder="Enter address"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.categories}
+                    value={newProduct.address}
                     onChange={handleInputChange}
                     required
                   />
@@ -365,18 +314,18 @@ const Stocks = () => {
                 {/* ID Input */}
                 <div className="mb-4  medium:ml-5  medium:w-3/4">
                   <label
-                    htmlFor="availableStocks"
+                    htmlFor="Phone no"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    AvailableStocks
+                    Phone no
                   </label>
                   <input
                     type="text"
-                    name="availableStocks"
-                    id="availableStocks"
-                    placeholder="Enter ID"
+                    name="phone"
+                    id="phone"
+                    placeholder="Enter Phone Number"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.availableStocks}
+                    value={newProduct.phone}
                     onChange={handleInputChange}
                     required
                   />
@@ -386,38 +335,20 @@ const Stocks = () => {
               {/* Product Name Input */}
               <div className=" flex x-small:flex-col medium:flex-row w-full">
                 {/* Categories Input */}
-                <div className="mb-4   medium:w-3/4">
+                <div className="mb-4 w-2/4">
                   <label
-                    htmlFor="qnt"
+                    htmlFor="order"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Quantity
+                    Order
                   </label>
                   <input
                     type="number"
-                    name="qnt"
-                    id="qnt"
-                    placeholder="Enter Quantity"
+                    name="order"
+                    id="sorder"
+                    placeholder="order"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.qnt}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="mb-4  medium:ml-5  medium:w-3/4">
-                  <label
-                    htmlFor="price"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Price
-                  </label>
-                  <input
-                    type="number"
-                    name="price"
-                    id="price"
-                    placeholder="Enter Price"
-                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.price}
+                    value={newProduct.order}
                     onChange={handleInputChange}
                     required
                   />
@@ -448,25 +379,25 @@ const Stocks = () => {
         <div className="fixed inset-0 flex  items-center justify-center bg-gray-800 bg-opacity-50 z-50  ">
           <div className="bg-blue-200 rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-lg large:max-w-lg extra-large:max-w-lg xx-large:max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
             <h2 className="text-2xl font-serif text-teal-600 mb-4">
-              Edit Stock
+              Edit Employee List
             </h2>
             <form onSubmit={handleFormSubmit}>
               {/* Supplier Name Input */}
               <div className=" flex x-small:flex-col medium:flex-row w-full">
                 <div className="mb-4 medium:w-3/4">
                   <label
-                    htmlFor="Seriel No"
+                    htmlFor="id"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Seriel No
+                    ID
                   </label>
                   <input
                     type="number"
-                    name="no"
-                    id="no"
-                    placeholder="Enter Seriel no"
+                    name="id"
+                    id="id"
+                    placeholder="Enter Employee ID"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.no}
+                    value={newProduct.id}
                     onChange={handleInputChange}
                     required
                   />
@@ -475,18 +406,18 @@ const Stocks = () => {
                 {/* Phone Input */}
                 <div className="mb-4 medium:ml-5 medium:w-3/4">
                   <label
-                    htmlFor="product"
+                    htmlFor="Employee Name"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Product
+                    Employee Name
                   </label>
                   <input
                     type="text"
-                    name="product"
-                    id="product"
-                    placeholder="Enter Product Name"
+                    name="employee"
+                    id="employee"
+                    placeholder="Enter Employee Name"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.product}
+                    value={newProduct.employee}
                     onChange={handleInputChange}
                     required
                   />
@@ -497,18 +428,18 @@ const Stocks = () => {
               <div className=" flex x-small:flex-col medium:flex-row w-full">
                 <div className="mb-4  medium:w-3/4">
                   <label
-                    htmlFor="categories"
+                    htmlFor="address"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Categories
+                    Address
                   </label>
                   <input
                     type="text"
-                    name="categories"
-                    id="categories"
-                    placeholder="Enter Categories"
+                    name="address"
+                    id="address"
+                    placeholder="Enter address"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.categories}
+                    value={newProduct.address}
                     onChange={handleInputChange}
                     required
                   />
@@ -517,18 +448,18 @@ const Stocks = () => {
                 {/* ID Input */}
                 <div className="mb-4  medium:ml-5  medium:w-3/4">
                   <label
-                    htmlFor="availableStocks"
+                    htmlFor="Phone no"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    AvailableStocks
+                    Phone no
                   </label>
                   <input
                     type="text"
-                    name="availableStocks"
-                    id="availableStocks"
-                    placeholder="Enter ID"
+                    name="phone"
+                    id="phone"
+                    placeholder="Enter Phone Number"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.availableStocks}
+                    value={newProduct.phone}
                     onChange={handleInputChange}
                     required
                   />
@@ -538,38 +469,20 @@ const Stocks = () => {
               {/* Product Name Input */}
               <div className=" flex x-small:flex-col medium:flex-row w-full">
                 {/* Categories Input */}
-                <div className="mb-4   medium:w-3/4">
+                <div className="mb-4   medium:w-2/4">
                   <label
-                    htmlFor="qnt"
+                    htmlFor="order"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Quantity
+                    Order
                   </label>
                   <input
                     type="number"
-                    name="qnt"
-                    id="qnt"
-                    placeholder="Enter Quantity"
+                    name="order"
+                    id="sorder"
+                    placeholder="Enter Your order"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.qnt}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="mb-4  medium:ml-5  medium:w-3/4">
-                  <label
-                    htmlFor="price"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Price
-                  </label>
-                  <input
-                    type="number"
-                    name="price"
-                    id="price"
-                    placeholder="Enter Price"
-                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.price}
+                    value={newProduct.order}
                     onChange={handleInputChange}
                     required
                   />
@@ -596,59 +509,36 @@ const Stocks = () => {
         </div>
       )}
 
-      {/* {viewPopup && selectedProduct && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-4 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-xs large:max-w-sm">
-            <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
-            <p>
-              <strong>Supplier Name:</strong> {selectedProduct.sname}
-            </p>
-            <p>
-              <strong>Phone Number:</strong> {selectedProduct.phone}
-            </p>
-            <p>
-              <strong>Address:</strong> {selectedProduct.add}
-            </p>
-            <button
-              className="mt-4 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
-              onClick={() => setShowPopup(false)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )} */}
-
       {/* /* Popup for Viewing Product */}
       {showPopup && selectedProduct && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-4 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-xs large:max-w-sm">
-            <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
+            <h2 className="text-2xl font-semibold mb-4">Employee Details</h2>
             <p>
-              <strong>Seriel No:</strong> {selectedProduct.no}
+              <strong>ID:</strong> {selectedProduct.id}
             </p>
             <p>
-              <strong>Product Name:</strong> {selectedProduct.product}
+              <strong>Employee Name:</strong> {selectedProduct.employee}
             </p>
             <p>
-              <strong>Categories:</strong> {selectedProduct.categories}
+              <strong>Address:</strong> {selectedProduct.address}
             </p>
             <p>
-              <strong>Available Stocks:</strong>{" "}
-              {selectedProduct.availableStocks}
+              <strong>Phone No:</strong> {selectedProduct.phone}
             </p>
             <p>
-              <strong>Quantity:</strong> {selectedProduct.qnt}
-            </p>
-            <p>
-              <strong>Price:</strong> {selectedProduct.price}
+              <strong>Order:</strong> {selectedProduct.order}
             </p>
 
             <button
-              className="mt-4 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+              className="mt-4 px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600"
               onClick={() => setShowPopup(false)}
             >
               Close
+            </button>
+            <button className="mt-4 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 ml-2">
+              <BsFiletypePdf className="w-5 h-6 inline mr-1" />
+              <span>Print</span>
             </button>
           </div>
         </div>
@@ -657,4 +547,4 @@ const Stocks = () => {
   );
 };
 
-export default Stocks;
+export default EmployeeDetails;

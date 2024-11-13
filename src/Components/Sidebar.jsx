@@ -98,13 +98,6 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
           </li>
         </div>
         
-        <li className={activeLink === "Attendence" ? "active" : ""}>
-          <Link to="/attendence" onClick={() => handleLinkClick("Attendence")}>
-          <i className="bx bxs-check-circle"></i>
-
-            <span className="text">Attendence</span>
-          </Link>
-        </li>
         <li className={activeLink === "employee" ? "active" : ""}>
           <Link to="/employee" onClick={() => handleLinkClick("employee")}>
           <i className="bx bxs-user"></i>
@@ -112,6 +105,15 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
             <span className="text">Employee Details</span>
           </Link>
         </li>
+        
+        <li className={activeLink === "Attendence" ? "active" : ""}>
+          <Link to="/attendence" onClick={() => handleLinkClick("Attendence")}>
+          <i className="bx bxs-check-circle"></i>
+
+            <span className="text">Attendence</span>
+          </Link>
+        </li>
+       
 
         
 
