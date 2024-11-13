@@ -95,7 +95,7 @@ const Stocks = () => {
   
       // Reference to the user's products collection in Firestore
       const userDocRef = doc(db, "admins", userEmail);
-      const productRef = doc(userDocRef, "Stocks",  no); // Reference to the product document
+      const productRef = doc(userDocRef, "Stocks", no); // Reference to the product document
   
       // Delete the product from Firestore
       await deleteDoc(productRef);
@@ -108,8 +108,6 @@ const Stocks = () => {
       console.error("Error deleting product: ", error);
     }
   };
-  
-
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -279,12 +277,12 @@ const Stocks = () => {
                   </button>
 
                   {/* Delete Icon */}
-                  <button
-                    className="text-red-600 hover:underline  ml-1"
-                    onClick={() => handleRemoveProduct(product.product)}
-                  >
-                    <RiDeleteBin5Line className="text-red-600 text-xl" />
-                  </button>
+        <button
+          className="text-red-600 hover:underline ml-2"
+          onClick={() => handleRemoveProduct(product.no)}
+        >
+          <RiDeleteBin5Line className="text-red-600 text-xl" />
+        </button>
                 </td>
               </tr>
             ))}
