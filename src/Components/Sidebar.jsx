@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Import Link from React Router
-
+import { toast } from 'react-toastify'; // Import if using react-toastify
 
 
 const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
@@ -10,6 +10,20 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
   const handleLinkClick = (link) => {
     setActiveLink(link);
   };
+
+  const handleLogout = () => {
+    const auth = getAuth();
+    signOut(auth)
+      .then(() => {
+        toast.success("Logged out successfully!");
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.error("Error during logout:", error);
+        toast.error("Error logging out. Please try again.");
+      });
+  };
+  
 
   return (
     <section id="sidebar" className={sidebarVisible ? "" : "hide"}>
@@ -98,13 +112,6 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
           </li>
         </div>
         
-        <li className={activeLink === "Attendence" ? "active" : ""}>
-          <Link to="/attendence" onClick={() => handleLinkClick("Attendence")}>
-          <i className="bx bxs-check-circle"></i>
-
-            <span className="text">Attendence</span>
-          </Link>
-        </li>
         <li className={activeLink === "employee" ? "active" : ""}>
           <Link to="/employee" onClick={() => handleLinkClick("employee")}>
           <i className="bx bxs-user"></i>
@@ -113,6 +120,14 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
           </Link>
         </li>
 
+        <li className={activeLink === "Attendence" ? "active" : ""}>
+          <Link to="/attendence" onClick={() => handleLinkClick("Attendence")}>
+          <i className="bx bxs-check-circle"></i>
+
+            <span className="text">Attendence</span>
+          </Link>
+        </li>
+       
         
 
         <li className={activeLink === "salary" ? "active" : ""}>
@@ -122,20 +137,22 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
             <span className="text">Salary</span>
           </Link>
         </li>
-     
-
-      <li className={activeLink === "logout" ? "active" : ""}>
-          <Link to="/logout" onClick={() => handleLinkClick("logout")}>
-          <i className="bx bx-log-out"></i>
-
-            <span className="text">Logout</span>
-          </Link>
-        </li>
         </ul>
    
 
       {
         <ul className="side-menu">
+<li className={activeLink === "logout" ? "active" : ""}>
+  <Link 
+    to="#" 
+    onClick={() => { handleLogout(); handleLinkClick("logout"); }}
+    style={{ color: "red", fontWeight: "bold"  }} // Inline styles for red color and bold font
+  >
+    <i className="bx bx-log-out"></i>
+    <span className="ml-2 font-extrabold font-label">Logout</span>
+  </Link>
+</li>
+
           <li>
             <Link to="/help">
             <i className="bx bxs-help-circle"></i>

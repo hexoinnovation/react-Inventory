@@ -14,6 +14,8 @@ import Shop from './pages/Account';
 import Order from './pages/Settings';
 import Dashboard from './pages/Dashboard';
 import Invoice from './pages/Invoice';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const App = () => {
@@ -92,7 +94,7 @@ const App = () => {
             
           </Routes>
         </div>
-
+        <ToastContainer position="top-center" autoClose={3000} />
         {/* Modal for Login/Signup */}
         {!isAuthenticated && showModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">

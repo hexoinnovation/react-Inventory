@@ -200,9 +200,8 @@ const Sales = () => {
                 Quantity
               </th>
               <th scope="col" className="px-6 py-3">
-         RPrice
+              RPrice
               </th>
-             
               <th scope="col" className="px-6 py-3">
                SPrice
               </th>
