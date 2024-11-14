@@ -13,14 +13,14 @@ import Attendence from './pages/Attendence';
 import Shop from './pages/Account';
 import Order from './pages/Settings';
 import Dashboard from './pages/Dashboard';
-<<<<<<< HEAD
+
 import EmployeeDetails from './pages/EmployeeDetails';
 import Invoice from './pages/invoice';
-=======
-import Invoice from './pages/Invoice';
+
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
->>>>>>> 6fe227ac62573ce64e69134506899794325fe3c9
+
 
 
 const App = () => {
