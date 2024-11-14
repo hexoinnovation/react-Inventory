@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineEye } from "react-icons/ai";
-import { IoBagAdd } from "react-icons/io5";
+
 import { BsFiletypePdf } from "react-icons/bs";
 import { IoPersonAdd } from "react-icons/io5";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { MdOutlineAddCircle } from "react-icons/md";
+
 import {
   doc,
   setDoc,
@@ -32,9 +32,21 @@ const Attendence = () => {
     employee: "",
     address: "",
     phone: "",
-    order: "",
+    pan: "",
+    aadhar: "",
+    type: "",
+    attendance:"",
   });
-
+  const handleAttendanceToggle = (id) => {
+    // Toggle the attendance for the selected product
+    setProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product.id === id
+          ? { ...product, attendance: product.attendance === 'present' ? "absent"  : 'present' }
+          : product
+      )
+    );
+  };
   // Get the current logged-in user
   const [user] = useAuthState(auth); // Returns current authenticated user
 
@@ -78,7 +90,11 @@ const Attendence = () => {
       employee: "",
       address: "",
       phone: "",
-      order: "",
+     
+      pan: "",
+    aadhar: "",
+    type: "",
+    attendance:"",
     });
   };
 
@@ -129,9 +145,11 @@ const Attendence = () => {
     }
   };
 
+
+
   return (
     <div className="container mx-auto p-4 mt-10">
-      <h1 className="text-4xl font-bold text-gray-600">Employees Details</h1>
+      <h1 className="text-4xl font-bold text-gray-600">Attendance</h1>
 
       <div className="flex justify-between mt-10 ">
         <div></div>
@@ -170,74 +188,128 @@ const Attendence = () => {
 
       {/* Table */}
       <div className="overflow-x-auto shadow-md sm:rounded-lg mt-10">
-        <table className="w-full text-sm text-left text-white">
-          <thead className="text-xs text-black uppercase bg-blue-200">
-            <tr>
-              <th scope="col" className="px-6 py-3">
-                ID
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Employee Name
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Address
-              </th>
-
-              <th scope="col" className="px-6 py-3">
-                Phone no
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Order
-              </th>
-
-              <th scope="col" className="px-6 py-3">
-                Action
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-gray-200 text-black">
-            {products.map((product) => (
-              <tr key={product.id} className="border-b hover:bg-gray-50">
-                <td className="px-6 py-4 font-medium">{product.id}</td>
-                <td className="px-6 py-4 font-medium">{product.employee}</td>
-                <td className="px-6 py-4">{product.address}</td>
-                <td className="px-6 py-4">{product.phone}</td>
-                <td className="px-6 py-4">{product.order}</td>
-
-                <td className="px-6 py-4">
-                  <button
-                    className="text-blue-600 hover:underline"
-                    onClick={() => {
-                      setShowPopup(true);
-                      setSelectedProduct(product);
+      <div className="overflow-x-auto shadow-md sm:rounded-lg mt-10">
+    <table className="w-full text-sm text-left text-white">
+      <thead className="text-xs text-black uppercase bg-blue-200">
+        <tr>
+          <th scope="col" className="px-6 py-3">
+            ID
+          </th>
+          <th scope="col" className="px-6 py-3">
+            Employee Name
+          </th>
+          <th scope="col" className="px-6 py-3">
+            Address
+          </th>
+          <th scope="col" className="px-6 py-3">
+            Phone no
+          </th>
+          <th scope="col" className="px-6 py-3">
+            PAN Number
+          </th>
+          <th scope="col" className="px-6 py-3">
+            Aadhar Number
+          </th>
+          <th scope="col" className="px-6 py-3">
+            Job Type
+          </th>
+          {/* New Attendance Column */}
+          <th scope="col" className="px-6 py-3">
+            Attendance
+          </th>
+          <th scope="col" className="px-6 py-3">
+            Action
+          </th>
+        </tr>
+      </thead>
+      <tbody className="bg-gray-200 text-black">
+        {products.map((product) => (
+          <tr
+            key={product.id}
+            className={`border-b  ${
+              product.attendance === 'present' ? 'bg-green-400' : 'bg-red-400'
+            }`}
+          >
+            <td className="px-6 py-4 font-medium">{product.id}</td>
+            <td className="px-6 py-4 font-medium">{product.employee}</td>
+            <td className="px-6 py-4">{product.address}</td>
+            <td className="px-6 py-4">{product.phone}</td>
+            <td className="px-6 py-4">{product.pan}</td>
+            <td className="px-6 py-4">{product.aadhar}</td>
+            <td className="px-6 py-4">{product.type}</td>
+            {/* Attendance Toggle */}
+            <td className="px-6 py-4 flex">
+              {product.attendance === 'present' ? 'Present' : 'Absent'}
+              <label className="flex items-center cursor-pointer ml-2">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={product.attendance === 'present'}
+                    onChange={() => handleAttendanceToggle(product.id)}
+                    className="hidden"
+                  />
+                  <div
+                    className={`toggle ${product.attendance === 'present' ? 'bg-green-500' : 'bg-red-500'}`}
+                    style={{
+                      width: '40px',
+                      height: '20px',
+                      borderRadius: '9999px',
+                      position: 'relative',
                     }}
                   >
-                    <AiOutlineEye className="text-blue-600 text-xl  ml-1" />
-                  </button>
+                    <div
+                      className={`dot ${
+                        product.attendance === 'present' ? 'translate-x-5' : 'translate-x-0'
+                      }`}
+                      style={{
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '50%',
+                        backgroundColor: 'white',
+                        position: 'absolute',
+                        top: '2px',
+                        transition: 'transform 0.3s ease',
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              </label>
+            </td>
+            <td className="px-6 py-4">
+              <button
+                className="text-blue-600 hover:underline"
+                onClick={() => {
+                  setShowPopup(true);
+                  setSelectedProduct(product);
+                }}
+              >
+                <AiOutlineEye className="text-blue-600 text-xl ml-1" />
+              </button>
 
-                  {/* Edit Icon */}
-                  <button
-                    className="text-green-600 hover:underline text-xl ml-1"
-                    onClick={() => {
-                      setEditPopup(true);
-                      setSelectedProduct(product);
-                    }}
-                  >
-                    <FaEdit className="text-green-600 text-xl " />
-                  </button>
+              {/* Edit Icon */}
+              <button
+                className="text-green-600 hover:underline text-xl ml-1"
+                onClick={() => {
+                  setEditPopup(true);
+                  setSelectedProduct(product);
+                }}
+              >
+                <FaEdit className="text-green-600 text-xl" />
+              </button>
 
-                  {/* Delete Icon */}
-                  <button
-                    className="text-red-600 hover:underline  ml-1"
-                    onClick={() => handleRemoveProduct(product.sname)}
-                  >
-                    <RiDeleteBin5Line className="text-red-600 text-xl" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              {/* Delete Icon */}
+              <button
+                className="text-red-600 hover:underline ml-1"
+                onClick={() => handleRemoveProduct(product.sname)}
+              >
+                <RiDeleteBin5Line className="text-red-600 text-xl" />
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+      </div>
       </div>
 
       {/* Modal for Creating Purchase Order */}
@@ -334,21 +406,82 @@ const Attendence = () => {
 
               {/* Product Name Input */}
               <div className=" flex x-small:flex-col medium:flex-row w-full">
-                {/* Categories Input */}
-                <div className="mb-4 w-2/4">
+              <div className="mb-4   medium:w-3/4">
                   <label
-                    htmlFor="order"
+                    htmlFor="PAN no"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Order
+                    PAN Number
                   </label>
                   <input
                     type="number"
-                    name="order"
-                    id="sorder"
-                    placeholder="order"
+                    name="pan"
+                    id="pan"
+                    placeholder="Enter PAN Number"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.order}
+                    value={newProduct.pan}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              <div className="mb-4 w-3/4 medium:ml-5">
+                  <label
+                    htmlFor="aadhar"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Aadhar
+                  </label>
+                  <input
+                    type="number"
+                    name="aadhar"
+                    id="aadhar"
+                    placeholder="aadhar"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.aadhar}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                {/* Categories Input */}
+               
+               
+              </div>
+
+              <div className=" flex x-small:flex-col medium:flex-row w-full">
+                {/* Categories Input */}
+                
+                <div className="mb-4   medium:w-3/4">
+                  <label
+                    htmlFor="type"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Job Type
+                  </label>
+                  <input
+                    type="text"
+                    name="type"
+                    id="type"
+                      placeholder="Enter type Number"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.type}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="mb-4 w-3/4 medium:ml-5">
+                  <label
+                    htmlFor="attendance"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Attendance
+                  </label>
+                  <input
+                    type="text"
+                    name="attendance"
+                    id="attendance"
+                    placeholder="attendance"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.attendance}
                     onChange={handleInputChange}
                     required
                   />
@@ -376,137 +509,198 @@ const Attendence = () => {
       )}
 
       {editPopup && (
-        <div className="fixed inset-0 flex  items-center justify-center bg-gray-800 bg-opacity-50 z-50  ">
-          <div className="bg-blue-200 rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-lg large:max-w-lg extra-large:max-w-lg xx-large:max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
-            <h2 className="text-2xl font-serif text-teal-600 mb-4">
-              Edit Employee List
-            </h2>
-            <form onSubmit={handleFormSubmit}>
-              {/* Supplier Name Input */}
-              <div className=" flex x-small:flex-col medium:flex-row w-full">
-                <div className="mb-4 medium:w-3/4">
-                  <label
-                    htmlFor="id"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    ID
-                  </label>
-                  <input
-                    type="number"
-                    name="id"
-                    id="id"
-                    placeholder="Enter Employee ID"
-                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.id}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
+       <div className="fixed inset-0 flex  items-center justify-center bg-gray-800 bg-opacity-50 z-50  ">
+       <div className="bg-blue-200 rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-lg large:max-w-lg extra-large:max-w-lg xx-large:max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
+         <h2 className="text-2xl font-serif text-teal-600 mb-4">
+           Create Employee List
+         </h2>
+         <form onSubmit={handleFormSubmit}>
+           {/* Supplier Name Input */}
+           <div className=" flex x-small:flex-col medium:flex-row w-full">
+             <div className="mb-4 medium:w-3/4">
+               <label
+                 htmlFor="id"
+                 className="block text-sm font-medium text-gray-700 mb-1"
+               >
+                 ID
+               </label>
+               <input
+                 type="number"
+                 name="id"
+                 id="id"
+                 placeholder="Enter Employee ID"
+                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                 value={newProduct.id}
+                 onChange={handleInputChange}
+                 required
+               />
+             </div>
 
-                {/* Phone Input */}
-                <div className="mb-4 medium:ml-5 medium:w-3/4">
+             {/* Phone Input */}
+             <div className="mb-4 medium:ml-5 medium:w-3/4">
+               <label
+                 htmlFor="Employee Name"
+                 className="block text-sm font-medium text-gray-700 mb-1"
+               >
+                 Employee Name
+               </label>
+               <input
+                 type="text"
+                 name="employee"
+                 id="employee"
+                 placeholder="Enter Employee Name"
+                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                 value={newProduct.employee}
+                 onChange={handleInputChange}
+                 required
+               />
+             </div>
+           </div>
+
+           {/* Address Input */}
+           <div className=" flex x-small:flex-col medium:flex-row w-full">
+             <div className="mb-4  medium:w-3/4">
+               <label
+                 htmlFor="address"
+                 className="block text-sm font-medium text-gray-700 mb-1"
+               >
+                 Address
+               </label>
+               <input
+                 type="text"
+                 name="address"
+                 id="address"
+                 placeholder="Enter address"
+                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                 value={newProduct.address}
+                 onChange={handleInputChange}
+                 required
+               />
+             </div>
+
+             {/* ID Input */}
+             <div className="mb-4  medium:ml-5  medium:w-3/4">
+               <label
+                 htmlFor="Phone no"
+                 className="block text-sm font-medium text-gray-700 mb-1"
+               >
+                 Phone no
+               </label>
+               <input
+                 type="text"
+                 name="phone"
+                 id="phone"
+                 placeholder="Enter Phone Number"
+                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                 value={newProduct.phone}
+                 onChange={handleInputChange}
+                 required
+               />
+             </div>
+           </div>
+
+           {/* Product Name Input */}
+           <div className=" flex x-small:flex-col medium:flex-row w-full">
+           <div className="mb-4   medium:w-3/4">
+               <label
+                 htmlFor="PAN no"
+                 className="block text-sm font-medium text-gray-700 mb-1"
+               >
+                 PAN Number
+               </label>
+               <input
+                 type="number"
+                 name="pan"
+                 id="pan"
+                 placeholder="Enter PAN Number"
+                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                 value={newProduct.pan}
+                 onChange={handleInputChange}
+                 required
+               />
+             </div>
+           <div className="mb-4 w-3/4 medium:ml-5">
+               <label
+                 htmlFor="aadhar"
+                 className="block text-sm font-medium text-gray-700 mb-1"
+               >
+                 Aadhar
+               </label>
+               <input
+                 type="number"
+                 name="aadhar"
+                 id="aadhar"
+                 placeholder="aadhar"
+                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                 value={newProduct.aadhar}
+                 onChange={handleInputChange}
+                 required
+               />
+             </div>
+             {/* Categories Input */}
+            
+            
+           </div>
+
+           <div className=" flex x-small:flex-col medium:flex-row w-full">
+             {/* Categories Input */}
+             
+             <div className="mb-4   medium:w-3/4">
+               <label
+                 htmlFor="type"
+                 className="block text-sm font-medium text-gray-700 mb-1"
+               >
+                 Job Type
+               </label>
+               <input
+                 type="text"
+                 name="type"
+                 id="type"
+                   placeholder="Enter type Number"
+                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                 value={newProduct.type}
+                 onChange={handleInputChange}
+                 required
+               />
+             </div>
+             <div className="mb-4 w-3/4 medium:ml-5">
                   <label
-                    htmlFor="Employee Name"
+                    htmlFor="attendance"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Employee Name
+                    Attendance
                   </label>
                   <input
                     type="text"
-                    name="employee"
-                    id="employee"
-                    placeholder="Enter Employee Name"
+                    name="attendance"
+                    id="attendance"
+                    placeholder="attendance"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.employee}
+                    value={newProduct.attendance}
                     onChange={handleInputChange}
                     required
                   />
                 </div>
-              </div>
+           </div>
 
-              {/* Address Input */}
-              <div className=" flex x-small:flex-col medium:flex-row w-full">
-                <div className="mb-4  medium:w-3/4">
-                  <label
-                    htmlFor="address"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Address
-                  </label>
-                  <input
-                    type="text"
-                    name="address"
-                    id="address"
-                    placeholder="Enter address"
-                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.address}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                {/* ID Input */}
-                <div className="mb-4  medium:ml-5  medium:w-3/4">
-                  <label
-                    htmlFor="Phone no"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Phone no
-                  </label>
-                  <input
-                    type="text"
-                    name="phone"
-                    id="phone"
-                    placeholder="Enter Phone Number"
-                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.phone}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Product Name Input */}
-              <div className=" flex x-small:flex-col medium:flex-row w-full">
-                {/* Categories Input */}
-                <div className="mb-4   medium:w-2/4">
-                  <label
-                    htmlFor="order"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Order
-                  </label>
-                  <input
-                    type="number"
-                    name="order"
-                    id="sorder"
-                    placeholder="Enter Your order"
-                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.order}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 mt-4">
-                <button
-                  type="button"
-                  className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none"
-                  onClick={() => setEditPopup(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 text-white bg-teal-500 rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+           <div className="flex justify-end gap-2 mt-4">
+             <button
+               type="button"
+               className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none"
+               onClick={() => setEditPopup(false)}
+             >
+               Cancel
+             </button>
+             <button
+               type="submit"
+               className="px-4 py-2 text-white bg-teal-500 rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+             >
+               Save
+             </button>
+           </div>
+         </form>
+       </div>
+     </div>
       )}
 
       {/* /* Popup for Viewing Product */}
@@ -526,8 +720,18 @@ const Attendence = () => {
             <p>
               <strong>Phone No:</strong> {selectedProduct.phone}
             </p>
+           
             <p>
-              <strong>Order:</strong> {selectedProduct.order}
+              <strong>PAN Number:</strong> {selectedProduct.pan}
+            </p>
+            <p>
+              <strong>Aadhar Number:</strong> {selectedProduct.aadhar}
+            </p>
+            <p>
+              <strong>Job Type:</strong> {selectedProduct.type}
+            </p>
+            <p>
+              <strong>Attendance:</strong> {selectedProduct.attendance}
             </p>
 
             <button
