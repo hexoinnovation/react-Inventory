@@ -15,9 +15,9 @@ import Order from './pages/Settings';
 import Dashboard from './pages/Dashboard';
 
 import EmployeeDetails from './pages/EmployeeDetails';
-
-
 import Invoice from './pages/invoice';
+
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

@@ -120,8 +120,7 @@ const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
           </Link>
         </li>
         
-       
-       
+              
 
         <li className={activeLink === "Attendence" ? "active" : ""}>
           <Link to="/attendence" onClick={() => handleLinkClick("Attendence")}>
