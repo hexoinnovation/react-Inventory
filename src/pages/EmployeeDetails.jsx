@@ -32,7 +32,7 @@ const EmployeeDetails = () => {
     employee: "",
     address: "",
     phone: "",
-   
+
     pan: "",
     aadhar: "",
     type: "",
@@ -81,10 +81,10 @@ const EmployeeDetails = () => {
       employee: "",
       address: "",
       phone: "",
-     
+
       pan: "",
-    aadhar: "",
-    type: "",
+      aadhar: "",
+      type: "",
     });
   };
 
@@ -157,7 +157,6 @@ const EmployeeDetails = () => {
             <option value="Tablet">Tablet</option>
           </select>
         </div> */}
-
         {/* Create Purchase Order and Download Button */}
         <div className="flex x-small:flex-col medium:flex-row gap-2 x-small:ml-10 ">
           <button
@@ -171,6 +170,10 @@ const EmployeeDetails = () => {
               <span className="text-base font-bold">ADD Employee</span>
             </div>
           </button>
+          <button className="px-1 py-1 text-white font-bold bg-blue-500 rounded-full hover:bg-blue-600 w-24">
+            <BsFiletypePdf className="w-5 h-6 inline mr-1" />
+            <span>Print</span>
+          </button>{" "}
         </div>
       </div>
 
@@ -201,7 +204,7 @@ const EmployeeDetails = () => {
               <th scope="col" className="px-6 py-3">
                 Job Type
               </th>
-           
+
               <th scope="col" className="px-6 py-3">
                 Action
               </th>
@@ -214,7 +217,7 @@ const EmployeeDetails = () => {
                 <td className="px-6 py-4 font-medium">{product.employee}</td>
                 <td className="px-6 py-4">{product.address}</td>
                 <td className="px-6 py-4">{product.phone}</td>
-             
+
                 <td className="px-6 py-4">{product.pan}</td>
                 <td className="px-6 py-4">{product.aadhar}</td>
                 <td className="px-6 py-4">{product.type}</td>
@@ -349,7 +352,7 @@ const EmployeeDetails = () => {
 
               {/* Product Name Input */}
               <div className=" flex x-small:flex-col medium:flex-row w-full">
-              <div className="mb-4   medium:w-3/4">
+                <div className="mb-4   medium:w-3/4">
                   <label
                     htmlFor="PAN no"
                     className="block text-sm font-medium text-gray-700 mb-1"
@@ -367,7 +370,7 @@ const EmployeeDetails = () => {
                     required
                   />
                 </div>
-              <div className="mb-4 w-3/4 medium:ml-5">
+                <div className="mb-4 w-3/4 medium:ml-5">
                   <label
                     htmlFor="aadhar"
                     className="block text-sm font-medium text-gray-700 mb-1"
@@ -386,13 +389,11 @@ const EmployeeDetails = () => {
                   />
                 </div>
                 {/* Categories Input */}
-               
-               
               </div>
 
               <div className=" flex x-small:flex-col medium:flex-row w-full">
                 {/* Categories Input */}
-                
+
                 <div className="mb-4   medium:w-2/4">
                   <label
                     htmlFor="type"
@@ -400,16 +401,24 @@ const EmployeeDetails = () => {
                   >
                     Job Type
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="type"
                     id="type"
-                      placeholder="Enter type Number"
                     className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     value={newProduct.type}
                     onChange={handleInputChange}
                     required
-                  />
+                  >
+                    <option value="" disabled>
+                      Select type
+                    </option>
+                    <option value="permanent" className="hover:bg-blue-500">
+                      Permanent
+                    </option>
+                    <option value="temporary" className="hover:bg-blue-500">
+                      Temporary
+                    </option>
+                  </select>
                 </div>
               </div>
 
@@ -434,180 +443,178 @@ const EmployeeDetails = () => {
       )}
 
       {editPopup && (
-       <div className="fixed inset-0 flex  items-center justify-center bg-gray-800 bg-opacity-50 z-50  ">
-       <div className="bg-blue-200 rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-lg large:max-w-lg extra-large:max-w-lg xx-large:max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
-         <h2 className="text-2xl font-serif text-teal-600 mb-4">
-           Create Employee List
-         </h2>
-         <form onSubmit={handleFormSubmit}>
-           {/* Supplier Name Input */}
-           <div className=" flex x-small:flex-col medium:flex-row w-full">
-             <div className="mb-4 medium:w-3/4">
-               <label
-                 htmlFor="id"
-                 className="block text-sm font-medium text-gray-700 mb-1"
-               >
-                 ID
-               </label>
-               <input
-                 type="number"
-                 name="id"
-                 id="id"
-                 placeholder="Enter Employee ID"
-                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                 value={newProduct.id}
-                 onChange={handleInputChange}
-                 required
-               />
-             </div>
+        <div className="fixed inset-0 flex  items-center justify-center bg-gray-800 bg-opacity-50 z-50  ">
+          <div className="bg-blue-200 rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-lg large:max-w-lg extra-large:max-w-lg xx-large:max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
+            <h2 className="text-2xl font-serif text-teal-600 mb-4">
+              Create Employee List
+            </h2>
+            <form onSubmit={handleFormSubmit}>
+              {/* Supplier Name Input */}
+              <div className=" flex x-small:flex-col medium:flex-row w-full">
+                <div className="mb-4 medium:w-3/4">
+                  <label
+                    htmlFor="id"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    ID
+                  </label>
+                  <input
+                    type="number"
+                    name="id"
+                    id="id"
+                    placeholder="Enter Employee ID"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.id}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
 
-             {/* Phone Input */}
-             <div className="mb-4 medium:ml-5 medium:w-3/4">
-               <label
-                 htmlFor="Employee Name"
-                 className="block text-sm font-medium text-gray-700 mb-1"
-               >
-                 Employee Name
-               </label>
-               <input
-                 type="text"
-                 name="employee"
-                 id="employee"
-                 placeholder="Enter Employee Name"
-                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                 value={newProduct.employee}
-                 onChange={handleInputChange}
-                 required
-               />
-             </div>
-           </div>
+                {/* Phone Input */}
+                <div className="mb-4 medium:ml-5 medium:w-3/4">
+                  <label
+                    htmlFor="Employee Name"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Employee Name
+                  </label>
+                  <input
+                    type="text"
+                    name="employee"
+                    id="employee"
+                    placeholder="Enter Employee Name"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.employee}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
 
-           {/* Address Input */}
-           <div className=" flex x-small:flex-col medium:flex-row w-full">
-             <div className="mb-4  medium:w-3/4">
-               <label
-                 htmlFor="address"
-                 className="block text-sm font-medium text-gray-700 mb-1"
-               >
-                 Address
-               </label>
-               <input
-                 type="text"
-                 name="address"
-                 id="address"
-                 placeholder="Enter address"
-                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                 value={newProduct.address}
-                 onChange={handleInputChange}
-                 required
-               />
-             </div>
+              {/* Address Input */}
+              <div className=" flex x-small:flex-col medium:flex-row w-full">
+                <div className="mb-4  medium:w-3/4">
+                  <label
+                    htmlFor="address"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    id="address"
+                    placeholder="Enter address"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.address}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
 
-             {/* ID Input */}
-             <div className="mb-4  medium:ml-5  medium:w-3/4">
-               <label
-                 htmlFor="Phone no"
-                 className="block text-sm font-medium text-gray-700 mb-1"
-               >
-                 Phone no
-               </label>
-               <input
-                 type="text"
-                 name="phone"
-                 id="phone"
-                 placeholder="Enter Phone Number"
-                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                 value={newProduct.phone}
-                 onChange={handleInputChange}
-                 required
-               />
-             </div>
-           </div>
+                {/* ID Input */}
+                <div className="mb-4  medium:ml-5  medium:w-3/4">
+                  <label
+                    htmlFor="Phone no"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Phone no
+                  </label>
+                  <input
+                    type="text"
+                    name="phone"
+                    id="phone"
+                    placeholder="Enter Phone Number"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.phone}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
 
-           {/* Product Name Input */}
-           <div className=" flex x-small:flex-col medium:flex-row w-full">
-           <div className="mb-4   medium:w-3/4">
-               <label
-                 htmlFor="PAN no"
-                 className="block text-sm font-medium text-gray-700 mb-1"
-               >
-                 PAN Number
-               </label>
-               <input
-                 type="number"
-                 name="pan"
-                 id="pan"
-                 placeholder="Enter PAN Number"
-                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                 value={newProduct.pan}
-                 onChange={handleInputChange}
-                 required
-               />
-             </div>
-           <div className="mb-4 w-3/4 medium:ml-5">
-               <label
-                 htmlFor="aadhar"
-                 className="block text-sm font-medium text-gray-700 mb-1"
-               >
-                 Aadhar
-               </label>
-               <input
-                 type="number"
-                 name="aadhar"
-                 id="aadhar"
-                 placeholder="aadhar"
-                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                 value={newProduct.aadhar}
-                 onChange={handleInputChange}
-                 required
-               />
-             </div>
-             {/* Categories Input */}
-            
-            
-           </div>
+              {/* Product Name Input */}
+              <div className=" flex x-small:flex-col medium:flex-row w-full">
+                <div className="mb-4   medium:w-3/4">
+                  <label
+                    htmlFor="PAN no"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    PAN Number
+                  </label>
+                  <input
+                    type="number"
+                    name="pan"
+                    id="pan"
+                    placeholder="Enter PAN Number"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.pan}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="mb-4 w-3/4 medium:ml-5">
+                  <label
+                    htmlFor="aadhar"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Aadhar
+                  </label>
+                  <input
+                    type="number"
+                    name="aadhar"
+                    id="aadhar"
+                    placeholder="aadhar"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.aadhar}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                {/* Categories Input */}
+              </div>
 
-           <div className=" flex x-small:flex-col medium:flex-row w-full">
-             {/* Categories Input */}
-             
-             <div className="mb-4   medium:w-2/4">
-               <label
-                 htmlFor="type"
-                 className="block text-sm font-medium text-gray-700 mb-1"
-               >
-                 Job Type
-               </label>
-               <input
-                 type="text"
-                 name="type"
-                 id="type"
-                   placeholder="Enter type Number"
-                 className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                 value={newProduct.type}
-                 onChange={handleInputChange}
-                 required
-               />
-             </div>
-           </div>
+              <div className=" flex x-small:flex-col medium:flex-row w-full">
+                {/* Categories Input */}
 
-           <div className="flex justify-end gap-2 mt-4">
-             <button
-               type="button"
-               className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none"
-               onClick={() => setEditPopup(false)}
-             >
-               Cancel
-             </button>
-             <button
-               type="submit"
-               className="px-4 py-2 text-white bg-teal-500 rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
-             >
-               Save
-             </button>
-           </div>
-         </form>
-       </div>
-     </div>
+                <div className="mb-4   medium:w-2/4">
+                  <label
+                    htmlFor="type"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Job Type
+                  </label>
+                  <input
+                    type="text"
+                    name="type"
+                    id="type"
+                    placeholder="Enter type Number"
+                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    value={newProduct.type}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  type="button"
+                  className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none"
+                  onClick={() => setEditPopup(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-white bg-teal-500 rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
 
       {/* /* Popup for Viewing Product */}
@@ -627,7 +634,7 @@ const EmployeeDetails = () => {
             <p>
               <strong>Phone No:</strong> {selectedProduct.phone}
             </p>
-           
+
             <p>
               <strong>PAN Number:</strong> {selectedProduct.pan}
             </p>
