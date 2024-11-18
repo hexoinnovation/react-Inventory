@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineEye } from "react-icons/ai";
 import { IoBagAdd } from "react-icons/io5";
 import { BsFiletypePdf } from "react-icons/bs";
-
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { MdOutlineAddCircle } from "react-icons/md";
 import {
@@ -15,6 +14,7 @@ import {
   getDocs,
   writeBatch,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { auth } from "../config/firebase"; // Make sure you have firebase authentication set up
@@ -63,10 +63,10 @@ const Sales = () => {
 
       // Create a document reference for the user in Firestore
       const userDocRef = doc(db, "admins", userEmail); // Reference to the 'admins' collection using the user's email
-      const productRef = collection(userDocRef, "products"); // Reference to the 'products' subcollection
+      const productRef = collection(userDocRef, "Sales"); // Reference to the 'products' subcollection
 
       // Set the product document
-      await setDoc(doc(productRef, newProduct.sname), newProduct);
+      await setDoc(doc(productRef, newProduct.no), newProduct);
 
       alert("Product added successfully!");
     } catch (error) {
@@ -85,36 +85,51 @@ const Sales = () => {
   };
 
   // Handle removing all products for a supplier
-  const handleRemoveProduct = async (Suppliername) => {
+  const handleRemoveProduct = async (no) => {
     try {
-      // Reference to the user's product collection
-      const userCollectionRef = collection(
-        db,
-        "admins",
-        user.email,
-        "products"
+      // Get the logged-in user's email
+      const userEmail = user.email;
+
+      // Reference to the user's products collection in Firestore
+      const userDocRef = doc(db, "admins", userEmail);
+      const productRef = doc(userDocRef, "Sales", no); // Reference to the product document
+
+      // Delete the product from Firestore
+      await deleteDoc(productRef);
+
+      // Remove the product from the local state without needing to refetch
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.no !== no)
       );
 
-      // Get all products for this supplier
-      const supplierQuery = query(
-        userCollectionRef,
-        where("sname", "==", Suppliername)
-      );
-      const querySnapshot = await getDocs(supplierQuery);
-
-      // Delete each product document that matches the supplier name
-      const batch = writeBatch(db);
-      querySnapshot.forEach((doc) => {
-        batch.delete(doc.ref);
-      });
-      await batch.commit();
-
-      alert(`All products for ${Suppliername} deleted successfully!`);
+      alert("Product deleted successfully!");
     } catch (error) {
-      console.error("Error deleting products for supplier: ", error);
-      alert("Error deleting products for supplier. Please try again.");
+      console.error("Error deleting product: ", error);
     }
   };
+
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!user) return; // If no user is logged in, skip fetching
+
+      try {
+        const userEmail = user.email; // Get the logged-in user's email
+        const userDocRef = doc(db, "admins", userEmail); // Reference to the 'admins' collection
+        const productsRef = collection(userDocRef, "Sales"); // Reference to the 'Purchase' subcollection
+
+        const productSnapshot = await getDocs(productsRef); // Fetch the products from the 'Purchase' subcollection
+        const productList = productSnapshot.docs.map((doc) => doc.data()); // Map the documents to an array of data
+
+        setProducts(productList); // Set the products in state
+      } catch (error) {
+        console.error("Error fetching products: ", error);
+      }
+    };
+
+    fetchProducts();
+  }, [user]);
+
 
   // Function to handle product creation
   const handleCreateProduct = async () => {
@@ -130,6 +145,31 @@ const Sales = () => {
       console.error("Error adding document: ", error);
     }
   };
+
+
+  const handlePrint = () => {
+    const content = document.getElementById("salesTable"); // Get the table element by its ID
+    const printWindow = window.open("", "", "height=500, width=800"); // Open a new window for printing
+
+    printWindow.document.write("<html><head><title>Print</title>"); // Set the document's title
+    printWindow.document.write("<style>"); // Add custom styles for the print window
+    printWindow.document.write(
+      "table { width: 100%; border-collapse: collapse; }"
+    );
+    printWindow.document.write(
+      "td, th { padding: 10px; border: 1px solid #ddd; text-align: left; }"
+    );
+    printWindow.document.write("th { background-color: #f0f0f0; }"); // Optional: Add background for headers
+    printWindow.document.write("</style></head><body>");
+
+    printWindow.document.write(content.outerHTML); // Add the table content to the print window
+    printWindow.document.write("</body></html>");
+
+    printWindow.document.close(); // Close the document for printing
+    printWindow.print(); // Open the print dialog
+  };
+
+
 
   return (
     <div className="container mx-auto p-4 mt-10">
@@ -167,16 +207,19 @@ const Sales = () => {
               <span className="text-base font-bold">Create</span>
             </div>
           </button>
-          <button className="px-1 py-1 text-white font-bold bg-blue-500 rounded-full hover:bg-blue-600 w-24">
+          <button
+            className="px-1 py-1 text-white font-bold bg-blue-500 rounded-full hover:bg-blue-600 w-24"
+            onClick={handlePrint}
+          >
             <BsFiletypePdf className="w-5 h-6 inline mr-1" />
             <span>Print</span>
-          </button>
+          </button>{" "}
         </div>
       </div>
 
       {/* Table */}
       <div className="overflow-x-auto shadow-md sm:rounded-lg mt-10">
-        <table className="w-full text-sm text-left text-white">
+        <table id="salesTable" className="w-full text-sm text-left text-white">
           <thead className="text-xs text-black uppercase bg-blue-200">
             <tr>
               <th scope="col" className="px-6 py-3">
@@ -194,16 +237,13 @@ const Sales = () => {
               </th>
               <th scope="col" className="px-6 py-3">
 
-                RPrice
+              Selling price
               </th>
               <th>
 
-              RPrice
+              Regular price
               </th>
 
-              <th scope="col" className="px-6 py-3">
-                SPrice
-              </th>
               <th scope="col" className="px-6 py-3">
                 Action
               </th>
@@ -244,7 +284,7 @@ const Sales = () => {
                   {/* Delete Icon */}
                   <button
                     className="text-red-600 hover:underline  ml-1"
-                    onClick={() => handleRemoveProduct(product.sname)}
+                    onClick={() => handleRemoveProduct(product.no)}
                   >
                     <RiDeleteBin5Line className="text-red-600 text-xl" />
                   </button>
@@ -332,7 +372,7 @@ const Sales = () => {
                     htmlFor="quantity"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    quantity
+                    Quantity
                   </label>
                   <input
                     type="text"
@@ -355,7 +395,7 @@ const Sales = () => {
                     htmlFor="rprice"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Rprice
+                    Regular price
                   </label>
                   <input
                     type="number"
@@ -373,7 +413,7 @@ const Sales = () => {
                     htmlFor="sprice"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    SPrice
+                    Selling price
                   </label>
                   <input
                     type="number"
@@ -422,7 +462,7 @@ const Sales = () => {
                     htmlFor="sname"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Supplier Name
+                    Seriel No
                   </label>
                   <input
                     type="text"
@@ -442,7 +482,7 @@ const Sales = () => {
                     htmlFor="phone"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Phone Number
+                    Product
                   </label>
                   <input
                     type="text"
@@ -464,7 +504,7 @@ const Sales = () => {
                     htmlFor="add"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Address
+                    Categories
                   </label>
                   <input
                     type="text"
@@ -484,7 +524,7 @@ const Sales = () => {
                     htmlFor="id"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    ID
+                    Quantity
                   </label>
                   <input
                     type="text"
@@ -506,7 +546,7 @@ const Sales = () => {
                     htmlFor="pname"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Product Name
+                    Regular price
                   </label>
                   <input
                     type="text"
@@ -526,7 +566,7 @@ const Sales = () => {
                     htmlFor="qnt"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Quantity
+                     Selling price
                   </label>
                   <input
                     type="number"
@@ -562,25 +602,7 @@ const Sales = () => {
                   />
                 </div>
 
-                {/* Price Input */}
-                <div className="mb-4  medium:ml-5  medium:w-3/4">
-                  <label
-                    htmlFor="price"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Price
-                  </label>
-                  <input
-                    type="number"
-                    name="price"
-                    id="price"
-                    placeholder="Enter Price"
-                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.price}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
+                
               </div>
 
               <div className="flex justify-end gap-2 mt-4">

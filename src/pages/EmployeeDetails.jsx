@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineEye } from "react-icons/ai";
 import { IoBagAdd } from "react-icons/io5";
@@ -15,7 +15,8 @@ import {
   getDocs,
   writeBatch,
   deleteDoc,
-} from "firebase/firestore";
+  updateDoc,
+}from "firebase/firestore";
 import { db } from "../config/firebase";
 import { auth } from "../config/firebase"; // Make sure you have firebase authentication set up
 import { useAuthState } from "react-firebase-hooks/auth"; // To get current user
@@ -65,10 +66,10 @@ const EmployeeDetails = () => {
 
       // Create a document reference for the user in Firestore
       const userDocRef = doc(db, "admins", userEmail); // Reference to the 'admins' collection using the user's email
-      const productRef = collection(userDocRef, "products"); // Reference to the 'products' subcollection
+      const productRef = collection(userDocRef, "EmpDetails"); // Reference to the 'products' subcollection
 
       // Set the product document
-      await setDoc(doc(productRef, newProduct.sname), newProduct);
+      await setDoc(doc(productRef, newProduct.id), newProduct);
 
       alert("Product added successfully!");
     } catch (error) {
@@ -81,7 +82,6 @@ const EmployeeDetails = () => {
       employee: "",
       address: "",
       phone: "",
-
       pan: "",
       aadhar: "",
       type: "",
@@ -89,37 +89,29 @@ const EmployeeDetails = () => {
   };
 
   // Handle removing all products for a supplier
-  const handleRemoveProduct = async (Suppliername) => {
+   // Handle removing all products for a supplier
+   const handleRemoveProduct = async (id) => {
     try {
-      // Reference to the user's product collection
-      const userCollectionRef = collection(
-        db,
-        "admins",
-        user.email,
-        "products"
+      // Get the logged-in user's email
+      const userEmail = user.email;
+
+      // Reference to the user's products collection in Firestore
+      const userDocRef = doc(db, "admins", userEmail);
+      const productRef = doc(userDocRef, "EmpDetails", id); // Reference to the product document
+
+      // Delete the product from Firestore
+      await deleteDoc(productRef);
+
+      // Remove the product from the local state without needing to refetch
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.id !== id)
       );
 
-      // Get all products for this supplier
-      const supplierQuery = query(
-        userCollectionRef,
-        where("sname", "==", Suppliername)
-      );
-      const querySnapshot = await getDocs(supplierQuery);
-
-      // Delete each product document that matches the supplier name
-      const batch = writeBatch(db);
-      querySnapshot.forEach((doc) => {
-        batch.delete(doc.ref);
-      });
-      await batch.commit();
-
-      alert(`All products for ${Suppliername} deleted successfully!`);
+      alert("Product deleted successfully!");
     } catch (error) {
-      console.error("Error deleting products for supplier: ", error);
-      alert("Error deleting products for supplier. Please try again.");
+      console.error("Error deleting product: ", error);
     }
   };
-
   // Function to handle product creation
   const handleCreateProduct = async () => {
     try {
@@ -134,6 +126,53 @@ const EmployeeDetails = () => {
       console.error("Error adding document: ", error);
     }
   };
+
+
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!user) return; // If no user is logged in, skip fetching
+
+      try {
+        const userEmail = user.email; // Get the logged-in user's email
+        const userDocRef = doc(db, "admins", userEmail); // Reference to the 'admins' collection
+        const productsRef = collection(userDocRef, "EmpDetails"); // Reference to the 'Purchase' subcollection
+
+        const productSnapshot = await getDocs(productsRef); // Fetch the products from the 'Purchase' subcollection
+        const productList = productSnapshot.docs.map((doc) => doc.data()); // Map the documents to an array of data
+
+        setProducts(productList); // Set the products in state
+      } catch (error) {
+        console.error("Error fetching products: ", error);
+      }
+    };
+
+    fetchProducts();
+  }, [user]);
+
+
+  const handlePrint = () => {
+    const content = document.getElementById("EmpDetailsTable"); // Get the table element by its ID
+    const printWindow = window.open("", "", "height=500, width=800"); // Open a new window for printing
+
+    printWindow.document.write("<html><head><title>Print</title>"); // Set the document's title
+    printWindow.document.write("<style>"); // Add custom styles for the print window
+    printWindow.document.write(
+      "table { width: 100%; border-collapse: collapse; }"
+    );
+    printWindow.document.write(
+      "td, th { padding: 10px; border: 1px solid #ddd; text-align: left; }"
+    );
+    printWindow.document.write("th { background-color: #f0f0f0; }"); // Optional: Add background for headers
+    printWindow.document.write("</style></head><body>");
+
+    printWindow.document.write(content.outerHTML); // Add the table content to the print window
+    printWindow.document.write("</body></html>");
+
+    printWindow.document.close(); // Close the document for printing
+    printWindow.print(); // Open the print dialog
+  };
+
 
   return (
     <div className="container mx-auto p-4 mt-10">
@@ -170,7 +209,10 @@ const EmployeeDetails = () => {
               <span className="text-base font-bold">ADD Employee</span>
             </div>
           </button>
-          <button className="px-1 py-1 text-white font-bold bg-blue-500 rounded-full hover:bg-blue-600 w-24">
+          <button
+            className="px-1 py-1 text-white font-bold bg-blue-500 rounded-full hover:bg-blue-600 w-24"
+            onClick={handlePrint}
+          >
             <BsFiletypePdf className="w-5 h-6 inline mr-1" />
             <span>Print</span>
           </button>{" "}
@@ -179,7 +221,7 @@ const EmployeeDetails = () => {
 
       {/* Table */}
       <div className="overflow-x-auto shadow-md sm:rounded-lg mt-10">
-        <table className="w-full text-sm text-left text-white">
+        <table id="EmpDetailsTable" className="w-full text-sm text-left text-white">
           <thead className="text-xs text-black uppercase bg-blue-200">
             <tr>
               <th scope="col" className="px-6 py-3">
@@ -217,7 +259,6 @@ const EmployeeDetails = () => {
                 <td className="px-6 py-4 font-medium">{product.employee}</td>
                 <td className="px-6 py-4">{product.address}</td>
                 <td className="px-6 py-4">{product.phone}</td>
-
                 <td className="px-6 py-4">{product.pan}</td>
                 <td className="px-6 py-4">{product.aadhar}</td>
                 <td className="px-6 py-4">{product.type}</td>
@@ -247,7 +288,7 @@ const EmployeeDetails = () => {
                   {/* Delete Icon */}
                   <button
                     className="text-red-600 hover:underline  ml-1"
-                    onClick={() => handleRemoveProduct(product.sname)}
+                    onClick={() => handleRemoveProduct(product.id)}
                   >
                     <RiDeleteBin5Line className="text-red-600 text-xl" />
                   </button>
@@ -270,7 +311,7 @@ const EmployeeDetails = () => {
               <div className=" flex x-small:flex-col medium:flex-row w-full">
                 <div className="mb-4 medium:w-3/4">
                   <label
-                    htmlFor="id"
+                    htmlFor="Id"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
                     ID
@@ -619,8 +660,8 @@ const EmployeeDetails = () => {
 
       {/* /* Popup for Viewing Product */}
       {showPopup && selectedProduct && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-4 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-xs large:max-w-sm">
+        <div  className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+          <div id="EmpDetails" className="bg-white rounded-lg p-4 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-xs large:max-w-sm">
             <h2 className="text-2xl font-semibold mb-4">Employee Details</h2>
             <p>
               <strong>ID:</strong> {selectedProduct.id}
@@ -646,15 +687,18 @@ const EmployeeDetails = () => {
             </p>
 
             <button
-              className="mt-4 px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600"
+              className="mt-4 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
               onClick={() => setShowPopup(false)}
             >
               Close
             </button>
-            <button className="mt-4 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 ml-2">
-              <BsFiletypePdf className="w-5 h-6 inline mr-1" />
-              <span>Print</span>
-            </button>
+            {/* <button
+            className="px-1 py-1 text-white font-bold bg-blue-500 rounded-full hover:bg-blue-600 w-24"
+            onClick={handlePrint}
+          >
+            <BsFiletypePdf className="w-5 h-6 inline mr-1" />
+            <span>Print</span>
+          </button>{" "} */}
           </div>
         </div>
       )}

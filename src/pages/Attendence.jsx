@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineEye } from "react-icons/ai";
-
 import { BsFiletypePdf } from "react-icons/bs";
 import { IoPersonAdd } from "react-icons/io5";
 import { RiDeleteBin5Line } from "react-icons/ri";
@@ -34,20 +33,64 @@ const Attendence = () => {
     phone: "",
     attendance: "",
   });
-  const handleAttendanceToggle = (id) => {
-    // Toggle the attendance for the selected product
-    setProducts((prevProducts) =>
-      prevProducts.map((product) =>
-        product.id === id
-          ? {
-              ...product,
-              attendance:
-                product.attendance === "present" ? "absent" : "present",
-            }
-          : product
-      )
-    );
+
+
+const handleAttendanceToggle = async (id) => {
+    const currentDate = new Date();
+    const currentMonth = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}`; // Format: YYYY-MM
+    const currentDay = currentDate.toISOString().split("T")[0]; // Format: YYYY-MM-DD
+  
+    // Firestore paths
+    const userDocRef = doc(db, "admins", userEmail); // Replace `userEmail` with the logged-in user's email
+    const attendanceCollectionRef = collection(userDocRef, "Attendance");
+    const monthCollectionRef = collection(attendanceCollectionRef, currentMonth);
+    const dayDocRef = doc(monthCollectionRef, currentDay);
+  
+    // Toggle attendance locally and update Firestore
+    setProducts((prevProducts) => {
+      const updatedProducts = prevProducts.map((product) => {
+        if (product.id === id) {
+          const updatedAttendance =
+            product.attendance === "present" ? "absent" : "present";
+  
+          // Firestore update for the toggled product
+          const productData = {
+            [product.id]: {
+              EmployeeName: product.employee,
+              Phone: product.phone,
+              Attendance: updatedAttendance,
+            },
+          };
+  
+          setDoc(dayDocRef, productData, { merge: true })
+            .then(() => {
+              console.log("Attendance updated successfully in Firestore");
+            })
+            .catch((error) => {
+              console.error("Error updating Firestore:", error);
+            });
+  
+          // Return the updated product with toggled attendance
+          return {
+            ...product,
+            attendance: updatedAttendance,
+          };
+        }
+        return product;
+      });
+  
+      return updatedProducts;
+    });
   };
+
+
+
+
+
+
+  
   // Get the current logged-in user
   const [user] = useAuthState(auth); // Returns current authenticated user
 
@@ -91,7 +134,6 @@ const Attendence = () => {
       date: "",
       employee: "",
       phone: "",
-
       attendance: "",
     });
   };
@@ -143,6 +185,52 @@ const Attendence = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!user) return; // If no user is logged in, skip fetching
+
+      try {
+        const userEmail = user.email; // Get the logged-in user's email
+        const userDocRef = doc(db, "admins", userEmail); // Reference to the 'admins' collection
+        const productsRef = collection(userDocRef, "EmpDetails"); // Reference to the 'Purchase' subcollection
+
+        const productSnapshot = await getDocs(productsRef); // Fetch the products from the 'Purchase' subcollection
+        const productList = productSnapshot.docs.map((doc) => doc.data()); // Map the documents to an array of data
+
+        setProducts(productList); // Set the products in state
+      } catch (error) {
+        console.error("Error fetching products: ", error);
+      }
+    };
+
+    fetchProducts();
+  }, [user]);
+
+
+  const handlePrint = () => {
+    const content = document.getElementById("AttendenDetails"); // Get the table element by its ID
+    const printWindow = window.open("", "", "height=500, width=800"); // Open a new window for printing
+
+    printWindow.document.write("<html><head><title>Print</title>"); // Set the document's title
+    printWindow.document.write("<style>"); // Add custom styles for the print window
+    printWindow.document.write(
+      "table { width: 100%; border-collapse: collapse; }"
+    );
+    printWindow.document.write(
+      "td, th { padding: 10px; border: 1px solid #ddd; text-align: left; }"
+    );
+    printWindow.document.write("th { background-color: #f0f0f0; }"); // Optional: Add background for headers
+    printWindow.document.write("</style></head><body>");
+
+    printWindow.document.write(content.outerHTML); // Add the table content to the print window
+    printWindow.document.write("</body></html>");
+
+    printWindow.document.close(); // Close the document for printing
+    printWindow.print(); // Open the print dialog
+  };
+
+
+
   return (
     <div className="container mx-auto p-4 mt-10">
       <h1 className="text-4xl font-bold text-gray-600">Attendance</h1>
@@ -169,17 +257,20 @@ const Attendence = () => {
         {/* Create Purchase Order and Download Button */}
         <div className="flex x-small:flex-col medium:flex-row gap-2 x-small:ml-10 ">
           <button
-            className="px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 mr-4"
+            // className="px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 mr-4"
             onClick={() => setShowModal(true)}
           >
-            <div className="flex gap-1 ">
+            {/* <div className="flex gap-1 ">
               <span className="text-xl ">
                 <IoPersonAdd />
               </span>
               <span className="text-base font-bold">ADD Employee</span>
-            </div>
+            </div> */}
           </button>
-          <button className="px-1 py-1 text-white font-bold bg-blue-500 rounded-full hover:bg-blue-600 w-24">
+          <button
+            className="px-1 py-1 text-white font-bold bg-blue-500 rounded-full hover:bg-blue-600 w-24"
+            onClick={handlePrint}
+          >
             <BsFiletypePdf className="w-5 h-6 inline mr-1" />
             <span>Print</span>
           </button>{" "}
@@ -187,17 +278,18 @@ const Attendence = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto shadow-md sm:rounded-lg  mt-10 ">
-        <div className="overflow-x-auto shadow-md sm:rounded-lg">
+      <div id="AttendenDetails" className="overflow-x-auto shadow-md sm:rounded-lg  mt-10 ">
+        <div  className="overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left text-white">
             <thead className="text-xs text-black uppercase bg-blue-200">
               <tr>
                 <th scope="col" className="px-6 py-3">
                   ID
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 ">
                   Date
                 </th>
+                
                 <th scope="col" className="px-6 py-3">
                   Employee Name
                 </th>
@@ -206,13 +298,17 @@ const Attendence = () => {
                   Phone no
                 </th>
 
+                <th scope="col" className="px-6 py-3">
+                Job Type
+              </th>
+
                 {/* New Attendance Column */}
                 <th scope="col" className="px-6 py-3">
                   Attendance
                 </th>
-                <th scope="col" className="px-6 py-3">
+                {/* <th scope="col" className="px-6 py-3">
                   Action
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody className="bg-gray-200 text-black">
@@ -226,11 +322,15 @@ const Attendence = () => {
                   }`}
                 >
                   <td className="px-6 py-4 font-medium">{product.id}</td>
-                  <td className="px-6 py-4">{product.date}</td>
+                  <td className="px-6 py-4">{product.date}
+                  <th scope="col" className="px-6 py-3">
+                    {new Date().toISOString().split("T")[0]} {/* Formats as YYYY-MM-DD */}
+                  </th>
+                  </td>
                   <td className="px-6 py-4 font-medium">{product.employee}</td>
-
                   <td className="px-6 py-4">{product.phone}</td>
-
+                  <td className="px-6 py-4">{product.type}</td>
+                  
                   {/* Attendance Toggle */}
                   <td className="px-6 py-4 flex">
                     {product.attendance === "present" ? "Present" : "Absent"}
@@ -275,7 +375,7 @@ const Attendence = () => {
                       </div>
                     </label>
                   </td>
-                  <td className="px-6 py-4">
+                  {/* <td className="px-6 py-4">
                     <button
                       className="text-blue-600 hover:underline"
                       onClick={() => {
@@ -284,10 +384,10 @@ const Attendence = () => {
                       }}
                     >
                       <AiOutlineEye className="text-blue-600 text-xl ml-1" />
-                    </button>
+                    </button> */}
 
                     {/* Edit Icon */}
-                    <button
+                    {/* <button
                       className="text-green-600 hover:underline text-xl ml-1"
                       onClick={() => {
                         setEditPopup(true);
@@ -295,16 +395,16 @@ const Attendence = () => {
                       }}
                     >
                       <FaEdit className="text-green-600 text-xl" />
-                    </button>
+                    </button> */}
 
                     {/* Delete Icon */}
-                    <button
+                    {/* <button
                       className="text-red-600 hover:underline ml-1"
                       onClick={() => handleRemoveProduct(product.sname)}
                     >
                       <RiDeleteBin5Line className="text-red-600 text-xl" />
                     </button>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>
@@ -613,15 +713,12 @@ const Attendence = () => {
             </p>
 
             <button
-              className="mt-4 px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600"
+              className="mt-4 px-4 py-2 text-white bg-b-500 rounded-lg hover:bg-red-600"
               onClick={() => setShowPopup(false)}
             >
               Close
             </button>
-            <button className="mt-4 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 ml-2">
-              <BsFiletypePdf className="w-5 h-6 inline mr-1" />
-              <span>Print</span>
-            </button>
+            
           </div>
         </div>
       )}
