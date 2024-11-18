@@ -10,7 +10,7 @@ import { db } from './config/firebase'; // Import Firestore database
 import { doc, setDoc } from 'firebase/firestore'; // Firestore functions for adding data
 import Stocks from './pages/Stocks';
 import Attendence from './pages/Attendence';
-import Shop from './pages/Account';
+import Shop from './pages/Shop';
 import Order from './pages/Settings';
 import Dashboard from './pages/Dashboard';
 import EmployeeDetails from './pages/EmployeeDetails';

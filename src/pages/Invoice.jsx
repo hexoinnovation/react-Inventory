@@ -8,6 +8,22 @@ const Invoice = () => {
    // State to track the modal visibility and type (customer/client)
    const [modalVisible, setModalVisible] = useState(false);
    const [modalType, setModalType] = useState(null); // 'customer' or 'client'
+
+
+   const [image, setImage] = useState(null); // State to store the uploaded image
+
+   // Handle file input change (i.e., when a user uploads an image)
+   const handleFileChange = (e) => {
+     const file = e.target.files[0];
+     if (file) {
+       const reader = new FileReader();
+       reader.onloadend = () => {
+         setImage(reader.result); // Set the uploaded image URL to the state
+       };
+       reader.readAsDataURL(file); // Convert the image file to a URL
+     }
+   };
+ 
  
    // State for customer and client details (you can update with actual data)
    const customerDetails = "Customer Name: John Doe\nEmail: john@example.com";
@@ -32,16 +48,24 @@ const Invoice = () => {
         </div>
 
         <div className="flex justify-around items-center mb-6 ">
-          <div className="relative w-16 h-16 mb-2 x-small:mr-5 small:mr-0">
-            <input
-              type="file"
-              className="opacity-0 absolute w-full h-full cursor-pointer border rounded-lg" // rounded corners for the input
-            />
-            <div className="w-16 h-16 bg-gray-200 flex items-center justify-center rounded-lg border">
-              {/* rounded-lg for curved corners */}
-              <FaCamera className="text-black text-2xl" />
-            </div>
-          </div>
+        <div className="relative w-16 h-16 mb-2 x-small:mr-5 small:mr-0">
+      <input
+        type="file"
+        accept="image/*" // Allow only image files
+        onChange={handleFileChange}
+        className="opacity-0 absolute w-full h-full cursor-pointer border rounded-lg"
+      />
+      
+      {/* Display uploaded image if available, otherwise show the camera icon */}
+      <div className="w-16 h-16 bg-gray-200 flex items-center justify-center rounded-lg border">
+        {image ? (
+          <img src={image} alt="Uploaded" className="w-full h-full object-cover rounded-lg" />
+        ) : (
+          <FaCamera className="text-black text-2xl" />
+        )}
+      </div>
+    </div>
+
           <div className=" x-small:mr-3 small:mr-0">
             <div className="text-right">
               <label className="text-sm font-semibold">Status:</label>

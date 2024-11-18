@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom"; // Import Link from React Router
 
 
 
-const Sidebar = ({ sidebarVisible, toggleSidebar }) => {
+const Sidebar = ({ sidebarVisible }) => {
   const [activeLink, setActiveLink] = useState("Dashboard"); // Default active link is Dashboard
 
   // Handle link click and set active link
