@@ -13,7 +13,6 @@ import Attendence from './pages/Attendence';
 import Shop from './pages/Account';
 import Order from './pages/Settings';
 import Dashboard from './pages/Dashboard';
-
 import EmployeeDetails from './pages/EmployeeDetails';
 import Invoice from './pages/invoice';
 
