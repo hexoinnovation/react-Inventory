@@ -67,7 +67,7 @@ const Purchase = () => {
       const productRef = collection(userDocRef, "Purchase"); // Reference to the 'products' subcollection
 
       // Set the product document
-      await setDoc(doc(productRef, newProduct.sname), newProduct);
+      await setDoc(doc(productRef, newProduct.phone), newProduct);
 
       alert("Product added successfully!");
     } catch (error) {
@@ -113,33 +113,32 @@ const Purchase = () => {
       alert("Please log in to update a product.");
       return;
     }
-
+  
     try {
-      const userEmail = user.email; // Get the email of the logged-in user
-
-      // Reference the user's document in the 'admins' collection and the 'Purchase' subcollection
-      const userDocRef = doc(db, "admins", userEmail);
-      const productDocRef = doc(userDocRef, "Purchase", updatedProduct.sname); // Reference to the product document by 'sname'
-
-      // Update the product document in Firestore
+      const userEmail = user.email; // Logged-in user's email
+      const userDocRef = doc(db, "admins", userEmail); // Admins collection reference
+      const productDocRef = doc(userDocRef, "Purchase", updatedProduct.phone); // Reference to product doc by phone
+  
+      // Update Firestore document, merging fields
       await setDoc(productDocRef, updatedProduct, { merge: true });
-
+  
       alert("Product updated successfully!");
-
-      // Update the product in local state
+  
+      // Update local state
       setProducts((prev) =>
         prev.map((product) =>
-          product.sname === updatedProduct.sname ? updatedProduct : product
+          product.phone === updatedProduct.phone ? updatedProduct : product
         )
       );
+  
+      setEditPopup(false); // Close the modal
     } catch (error) {
-      console.error("Error updating product in Firestore: ", error);
+      console.error("Error updating product in Firestore:", error);
       alert("There was an error updating the product. Please try again.");
     }
-
-    setEditPopup(false); // Close the edit modal after updating
   };
-
+  
+  
   const handleRemoveProduct = async (sname) => {
     try {
       // Get the logged-in user's email
@@ -290,17 +289,15 @@ const Purchase = () => {
                     <AiOutlineEye className="text-blue-600 text-xl ml-1" />
                   </button>
 
-                  {/* Edit Icon */}
                   <button
-                    className="text-green-600 hover:underline ml-1"
-                    onClick={() => {
-                      setEditPopup(true); // Open the edit popup modal
-                      setNewProduct(product); // Populate newProduct with the details of the selected product
-                    }}
-                  >
-                    <FaEdit className="text-green-600 text-xl ml-1" />
-                  </button>
-
+  className="text-green-600 hover:underline ml-1"
+  onClick={() => {
+    setEditPopup(true); // Open the edit popup modal
+    setNewProduct(product); // Populate form with the selected product details
+  }}
+>
+  <FaEdit className="text-green-600 text-xl ml-1" />
+</button>
                   {/* Delete Icon */}
                   <button
                     className="text-red-600 hover:underline ml-2"
@@ -518,7 +515,12 @@ const Purchase = () => {
             <h2 className="text-2xl font-serif text-teal-600 mb-4">
               Edit Purchase Order
             </h2>
-            <form onSubmit={handleFormSubmit}>
+            <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          updateProduct(newProduct); // Call the updateProduct function
+        }}
+      >
               {/* Supplier Name Input */}
               <div className=" flex x-small:flex-col medium:flex-row w-full">
                 <div className="mb-4 medium:w-3/4">

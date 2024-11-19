@@ -583,24 +583,7 @@ const Sales = () => {
 
               {/* Quantity Input */}
               <div className=" flex x-small:flex-col medium:flex-row w-full">
-                <div className="mb-4   medium:w-3/4">
-                  <label
-                    htmlFor="categories"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Categories
-                  </label>
-                  <input
-                    type="text"
-                    name="categories"
-                    id="categories"
-                    placeholder="Enter Categories"
-                    className="w-full p-1 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    value={newProduct.categories}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
+                
 
                 
               </div>
@@ -640,13 +623,13 @@ const Sales = () => {
               <strong>Categories:</strong> {selectedProduct.categories}
             </p>
             <p>
-              <strong>Available Stocks:</strong> {selectedProduct.qnt}
+              <strong>Quantity:</strong> {selectedProduct.qnt}
             </p>
             <p>
-              <strong>Quantity:</strong> {selectedProduct.rprice}
+              <strong>Selling price :</strong> {selectedProduct.rprice}
             </p>
             <p>
-              <strong>Price:</strong> {selectedProduct.sprice}
+              <strong>Regular price :</strong> {selectedProduct.sprice}
             </p>
 
             <button
