@@ -248,7 +248,7 @@ const Purchase = () => {
                 Address
               </th>
               <th scope="col" className="px-6 py-3">
-                Id
+                Product ID
               </th>
               <th scope="col" className="px-6 py-3">
                 Product Name

@@ -3,7 +3,6 @@ import { FaEdit } from "react-icons/fa";
 import { AiOutlineEye } from "react-icons/ai";
 import { IoBagAdd } from "react-icons/io5";
 import { BsFiletypePdf } from "react-icons/bs";
-
 import { RiDeleteBin5Line } from "react-icons/ri";
 
 import {
@@ -128,6 +127,39 @@ const Stocks = () => {
     fetchProducts();
   }, [user]);
 
+
+  const updateProduct = async (updatedProduct) => {
+    if (!user) {
+      alert("Please log in to update a product.");
+      return;
+    }
+  
+    try {
+      const userEmail = user.email; // Logged-in user's email
+      const userDocRef = doc(db, "admins", userEmail); // Admins collection reference
+      const productDocRef = doc(userDocRef, "Stocks", updatedProduct.no); // Reference to product doc by phone
+  
+      // Update Firestore document, merging fields
+      await setDoc(productDocRef, updatedProduct, { merge: true });
+  
+      alert("Product updated successfully!");
+  
+      // Update local state
+      setProducts((prev) =>
+        prev.map((product) =>
+          product.no === updatedProduct.no ? updatedProduct : product
+        )
+      );
+  
+      setEditPopup(false); // Close the modal
+    } catch (error) {
+      console.error("Error updating product in Firestore:", error);
+      alert("There was an error updating the product. Please try again.");
+    }
+  };
+  
+
+
   // Function to handle product creation
   const handleCreateProduct = async () => {
     try {
@@ -222,7 +254,7 @@ const Stocks = () => {
           <thead className="text-xs text-black uppercase bg-blue-200">
             <tr>
               <th scope="col" className="px-6 py-3">
-                Serial No
+                Product ID
               </th>
               <th scope="col" className="px-6 py-3">
                 Product Name
@@ -268,14 +300,14 @@ const Stocks = () => {
 
                   {/* Edit Icon */}
                   <button
-                    className="text-green-600 hover:underline text-xl ml-1"
-                    onClick={() => {
-                      setEditPopup(true);
-                      setSelectedProduct(product);
-                    }}
-                  >
-                    <FaEdit className="text-green-600 text-xl " />
-                  </button>
+  className="text-green-600 hover:underline ml-1"
+  onClick={() => {
+    setEditPopup(true); // Open the edit popup modal
+    setNewProduct(product); // Populate form with the selected product details
+  }}
+>
+  <FaEdit className="text-green-600 text-xl ml-1" />
+</button>
 
                   {/* Delete Icon */}
                   <button
@@ -444,13 +476,19 @@ const Stocks = () => {
         </div>
       )}
 
+{/* Modal for Editing Stocks Order */}
       {editPopup && (
         <div className="fixed inset-0 flex  items-center justify-center bg-gray-800 bg-opacity-50 z-50  ">
           <div className="bg-blue-200 rounded-lg p-4 mt-10 w-full max-w-xs x-small:ml-12 x-small:max-w-60 medium:max-w-lg large:max-w-lg extra-large:max-w-lg xx-large:max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
             <h2 className="text-2xl font-serif text-teal-600 mb-4">
               Edit Stock
             </h2>
-            <form onSubmit={handleFormSubmit}>
+            <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          updateProduct(newProduct); // Call the updateProduct function
+        }}
+      >
               {/* Supplier Name Input */}
               <div className=" flex x-small:flex-col medium:flex-row w-full">
                 <div className="mb-4 medium:w-3/4">
@@ -588,7 +626,7 @@ const Stocks = () => {
                   type="submit"
                   className="px-4 py-2 text-white bg-teal-500 rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
                 >
-                  Save
+                  Update
                 </button>
               </div>
             </form>

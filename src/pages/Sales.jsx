@@ -131,6 +131,38 @@ const Sales = () => {
   }, [user]);
 
 
+  const updateProduct = async (updatedProduct) => {
+    if (!user) {
+      alert("Please log in to update a product.");
+      return;
+    }
+  
+    try {
+      const userEmail = user.email; // Logged-in user's email
+      const userDocRef = doc(db, "admins", userEmail); // Admins collection reference
+      const productDocRef = doc(userDocRef, "Sales", updatedProduct.phone); // Reference to product doc by phone
+  
+      // Update Firestore document, merging fields
+      await setDoc(productDocRef, updatedProduct, { merge: true });
+  
+      alert("Product updated successfully!");
+  
+      // Update local state
+      setProducts((prev) =>
+        prev.map((product) =>
+          product.phone === updatedProduct.phone ? updatedProduct : product
+        )
+      );
+  
+      setEditPopup(false); // Close the modal
+    } catch (error) {
+      console.error("Error updating product in Firestore:", error);
+      alert("There was an error updating the product. Please try again.");
+    }
+  };
+
+
+
   // Function to handle product creation
   const handleCreateProduct = async () => {
     try {
@@ -223,7 +255,7 @@ const Sales = () => {
           <thead className="text-xs text-black uppercase bg-blue-200">
             <tr>
               <th scope="col" className="px-6 py-3">
-                Serial No
+                Product ID
               </th>
               <th scope="col" className="px-6 py-3">
                 Product Name
